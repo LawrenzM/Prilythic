@@ -6,22 +6,22 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{url_for('static', filename='CSS/example.css')}}">
     <title>Dashboard Page</title>
-    <script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='JS/dash.js') }}"></script>
+    <!-- Dark mode support -->
+    <script src="{{ url_for('static', filename='JS/dark_mode.js') }}"></script>
+        <script>
         window.products = [
             {% for info in products_info %}
                 "{{ info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') }}"{% if not loop.last %},{% endif %}
             {% endfor %}
         ];
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{{ url_for('static', filename='JS/dash.js') }}"></script>
-<script>
-  console.log("Products info from Flask:", {{ products_info | default([]) | tojson }});
-  console.log("Selected products (from Flask session):", {{ selected_products | default([]) | tojson }});
-</script>
-    <!-- Dark mode support -->
-    <script src="{{ url_for('static', filename='JS/dark_mode.js') }}"></script>
+        </script>
+        <script>
+            console.log("Products info from Flask:", {{ products_info | default([]) | tojson }});
+            console.log("Selected products (from Flask session):", {{ selected_products | default([]) | tojson }});
+        </script>
 </head> <!--ACCESS VIA APP.PY (CHANGE DIRECTORY TO WHERE APP.PY IS LOCATED(cd "FINAL PRILYTHIC"), THEN RUN APP.PY ("python app.py") )-->
 <body>  <!--ERROR LINES ARE NORMAL, IT IS FLASK INTEGRATION-->
 
@@ -37,40 +37,59 @@
         <input type="search_box" class="search" placeholder="Search...">
         <img src="{{url_for('static', filename='IMAGES/Search_icon.png')}}" alt="search icon" class="search-icn">
         <h1 class="dstxt">Dashboard</h1>
-    </div>
-    <div class="wall">
-        <div class="scrollable-price-charts">
-            {% for info in products_info %}
-            {% set safe_name = info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') %}
-            <div class="row mb-4">
-                <div class="col-md-8">
-                    <div class="card p-3 mb-3">
+    </div> 
+<div class="simulation-controls">
+    <button class="simulate-all-btn" onclick="simulateAllProducts()">Simulate All Products</button>
+</div>
+
+<div class="wall">
+    <div class="scrollable-price-charts">
+        {% for info in products_info %}
+        {% set safe_name = info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') %}
+        <div class="row mb-4 product-card" id="product-{{ safe_name }}">
+            <div class="col-md-8">
+                <div class="card p-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
                         <h5 class="mb-2">{{ info.name }}</h5>
-                        <canvas id="priceChart-{{ safe_name }}" class="price-chart-canvas"></canvas>
-                        <div class="btn-group mt-2">
-                            <button class="btn btn-outline-primary" onclick="updateChart('{{ safe_name }}', 3)">3 Months</button>
-                            <button class="btn btn-outline-primary" onclick="updateChart('{{ safe_name }}', 6)">6 Months</button>
-                            <button class="btn btn-outline-primary" onclick="updateChart('{{ safe_name }}', 9)">9 Months</button>
-                            <button class="btn btn-outline-primary" onclick="updateChart('{{ safe_name }}', 12)">Year</button>
-                        </div>
+                        <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ safe_name }}')">
+                            Simulate
+                        </button>
                     </div>
-                </div>
-                <div class="col-md-4 d-flex align-items-center">
-                    <div class="card p-3 w-100">
-                        <h4>Predicted Price (Next Month)</h4>
-                        <p class="display-6 text-success">{{ info.predicted_price | round(2) }}<br>
-                            <span class="fs-6 text-secondary">{{ info.next_month }}</span>
-                        </p>
+                    <canvas id="priceChart-{{ safe_name }}" class="price-chart-canvas"></canvas>
+                    <div class="btn-group mt-2">
+                        <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ safe_name }}', 3)">3M</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ safe_name }}', 6)">6M</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ safe_name }}', 9)">9M</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ safe_name }}', 12)">1Y</button>
                     </div>
                 </div>
             </div>
-            <script>
-                window['historical_{{ safe_name }}'] = {{ info.historical|tojson }};
-            </script>
-            {% endfor %}
+            <div class="col-md-4 d-flex align-items-center">
+                <div class="card p-3 w-100">
+                    <h6>Predicted Price</h6>
+                    <p class="display-6 text-success mb-1" id="predicted-{{ safe_name }}">
+                        {{ info.predicted_price | round(2) }}
+                    </p>
+                    <small class="text-muted" id="next-month-{{ safe_name }}">
+                        {{ info.next_month }}
+                    </small>
+                </div>
+            </div>
         </div>
+        <script>
+            // Store product data globally
+            window['historical_{{ safe_name }}'] = {{ info.historical|tojson }};
+            window['predicted_{{ safe_name }}'] = {{ info.predicted_price|tojson }};
+            window['next_month_{{ safe_name }}'] = "{{ info.next_month }}";
+            console.log('Loaded data for {{ safe_name }}:', {
+                historical: {{ info.historical|tojson }},
+                predicted: {{ info.predicted_price|tojson }},
+                next_month: "{{ info.next_month }}"
+            });
+        </script>
+        {% endfor %}
     </div>
-
+</div>
     <div class="favorite_wall">
         <h1 class="wall_txt">Favorites</h1>
         <p class="fav_txt">See your recently liked Products</p>
