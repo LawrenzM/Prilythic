@@ -10,7 +10,7 @@ from sklearn.metrics import mean_absolute_error, make_scorer
 
 # Load Data
 script_dir = os.path.dirname(os.path.abspath(__file__))
-details_path = os.path.join(script_dir, "PHL_RTFP_mkt_2007_2025-09-23.csv")
+details_path = os.path.join(script_dir, "Data.csv")
 ticker_path = os.path.join(script_dir, "PHL_RTP_ticker_info_2007_2025-09-23.csv")
 
 # Check if files exist
@@ -61,6 +61,16 @@ df_long["dayofweek"] = df_long["price_date"].dt.dayofweek
 df_long = df_long.sort_values(["product", "mkt_name", "price_date"])
 df_long["price_lag1"] = df_long.groupby(["product", "mkt_name"])["price"].shift(1)
 df_long["price_lag2"] = df_long.groupby(["product", "mkt_name"])["price"].shift(2)
+df_long["price_lag3"] = df_long.groupby(["product", "mkt_name"])["price"].shift(3)
+df_long["price_lag4"] = df_long.groupby(["product", "mkt_name"])["price"].shift(4)
+df_long["price_lag5"] = df_long.groupby(["product", "mkt_name"])["price"].shift(5)
+df_long["price_lag6"] = df_long.groupby(["product", "mkt_name"])["price"].shift(6)
+df_long["price_lag7"] = df_long.groupby(["product", "mkt_name"])["price"].shift(7)
+df_long["price_lag8"] = df_long.groupby(["product", "mkt_name"])["price"].shift(8)
+df_long["price_lag9"] = df_long.groupby(["product", "mkt_name"])["price"].shift(9)
+df_long["price_lag10"] = df_long.groupby(["product", "mkt_name"])["price"].shift(10)
+df_long["price_lag11"] = df_long.groupby(["product", "mkt_name"])["price"].shift(11)
+df_long["price_lag12"] = df_long.groupby(["product", "mkt_name"])["price"].shift(12)
 
 # One-hot encode product
 df_long = pd.get_dummies(df_long, columns=["product"], drop_first=True)
@@ -126,8 +136,8 @@ mse = mean_squared_error(y_test, y_pred)
 print(f"Mean Squared Error (MSE) on test set: {mse:.4f}")
 
 # Save the model and scaler
-model_path = os.path.join(script_dir, "orfm2.pkl")
-scaler_path = os.path.join(script_dir, "s2.pkl")
+model_path = os.path.join(script_dir, "orfm3.pkl")
+scaler_path = os.path.join(script_dir, "s3.pkl")
 joblib.dump(best_rf_model, model_path)
 joblib.dump(scaler, scaler_path)
 

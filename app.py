@@ -39,8 +39,8 @@ def init_db():
 init_db() 
 
 # --- Model and Scaler Paths ---
-model_path = os.path.join(BASE_DIR, 'PYTHON', 'orfm2.pkl')
-scaler_path = os.path.join(BASE_DIR, 'PYTHON', 's2.pkl')
+model_path = os.path.join(BASE_DIR, 'PYTHON', 'orfm3.pkl')
+scaler_path = os.path.join(BASE_DIR, 'PYTHON', 's3.pkl')
 data_path = os.path.join(BASE_DIR, 'PYTHON', 'PHL_RTFP_mkt_2007_2025-09-23.csv')
 
 # --- Load model and scaler ---
@@ -126,57 +126,62 @@ def dashboard():
 
     for product in selected_products:
         clean_product = product.replace("c_", "")
-        print("Product:", product)
-        print("Matching product column in features:",
-            [col for col in scaler.feature_names_in_ if f'product_{clean_product}' in col])
-        # Verify column existence
-        if product not in df.columns or len(df[['price_date', product]].dropna()) < 3:
+
+        if product not in df.columns or df[product].dropna().shape[0] < 1:
             continue
 
         data = df[['price_date', product]].dropna()
         data['price_date'] = pd.to_datetime(data['price_date'])
         data = data.sort_values('price_date')
 
+        # Remove duplicate months, keep last
         data['year_month'] = data['price_date'].dt.to_period('M')
-        data = data.drop_duplicates(subset='year_month', keep='last')
-        data = data.drop(columns=['year_month'])
+        data = data.drop_duplicates(subset='year_month', keep='last').drop(columns=['year_month'])
 
-        last_prices = data[product].values[-2:]
+        last_prices = data[product].values
         last_date = data['price_date'].max()
-        next_month = (last_date + pd.DateOffset(months=1)).month
-        next_year = (last_date + pd.DateOffset(months=1)).year
+        next_date = last_date + pd.DateOffset(months=1)
+
+        # --- Safe lag features ---
+        lags = 12
+        lag_values = [last_prices[-i] if i <= len(last_prices) else 0 for i in range(1, lags + 1)]
+        lag_dict = {f'price_lag{i+1}': [lag_values[i]] for i in range(lags)}
 
         input_data = {
-            'year': [next_year],
-            'month': [next_month],
-            'dayofweek': [0],
-            'price_lag1': [last_prices[-1]],
-            'price_lag2': [last_prices[-2]],
+            'year': [next_date.year],
+            'month': [next_date.month],
+            'dayofweek': [0],  # default placeholder
+            **lag_dict
         }
 
-        # One-hot encoding for model
+        # --- One-hot encoding ---
         for col in scaler.feature_names_in_:
             if col.startswith('product_'):
                 input_data[col] = [1 if col == f'product_{clean_product}' else 0]
 
-        df_input = pd.DataFrame(input_data)[scaler.feature_names_in_]
+        df_input = pd.DataFrame(input_data)
+        # Align with scaler features safely
+        df_input = df_input.reindex(columns=scaler.feature_names_in_, fill_value=0)
         df_scaled = scaler.transform(df_input)
         predicted_price = model.predict(df_scaled)[0]
-        data['price_date'] = data['price_date'].dt.strftime('%Y-%m-%d')
-        hist_data = data.tail(12).to_dict(orient='records')
+
+        hist_data = data.tail(12).copy()
+        hist_data['price_date'] = hist_data['price_date'].dt.strftime('%Y-%m-%d')
 
         clean_name = clean_product.replace("_", " ").title()
-
         products_info.append({
             "name": clean_name,
-            "historical": hist_data,
+            "historical": hist_data.to_dict(orient='records'),
             "predicted_price": float(predicted_price),
-            "next_month": f"{next_year}-{next_month:02d}-01",
+            "next_month": f"{next_date.year}-{next_date.month:02d}-01",
         })
 
-    return render_template('Dashboard.html',
-                           products_info=products_info,
-                           selected_products=[p.replace("c_", "").replace("_", " ").title() for p in selected_products])
+    return render_template(
+        'Dashboard.html',
+        products_info=products_info,
+        selected_products=[p.replace("c_", "").replace("_", " ").title() for p in selected_products]
+    )
+
 
 # --- Product Selection Page ---
 @app.route("/productSelect", methods=["GET", "POST"])
@@ -266,55 +271,51 @@ def render_product_page(product, template_name):
         return redirect(url_for('login_page'))
 
     df = pd.read_csv(data_path)
-
     clean_product = product.replace("c_", "")
 
-    # Check if the product column exists
-    if product not in df.columns or len(df[['price_date', product]].dropna()) < 3:
+    if product not in df.columns or df[product].dropna().shape[0] < 1:
         return render_template(f'{template_name}.html', info=None)
 
-    # Prepare data
     data = df[['price_date', product]].dropna()
     data['price_date'] = pd.to_datetime(data['price_date'])
     data = data.sort_values('price_date')
 
-    data['year_month'] = data['price_date'].dt.to_period('M')
-    data = data.drop_duplicates(subset='year_month', keep='last')
-    data = data.drop(columns=['year_month'])
-
-    # Prepare input for model
-    last_prices = data[product].values[-2:]
+    last_prices = data[product].values
     last_date = data['price_date'].max()
-    next_month = (last_date + pd.DateOffset(months=1)).month
-    next_year = (last_date + pd.DateOffset(months=1)).year
 
+    # --- Generate lag features safely ---
+    lags = 12
+    lag_values = [last_prices[-i] if i <= len(last_prices) else 0 for i in range(1, lags + 1)]
+    lag_dict = {f'price_lag{i+1}': [lag_values[i]] for i in range(lags)}
+
+    # --- Next month/year prediction ---
+    next_date = last_date + pd.DateOffset(months=1)
     input_data = {
-        'year': [next_year],
-        'month': [next_month],
-        'dayofweek': [0],
-        'price_lag1': [last_prices[-1]],
-        'price_lag2': [last_prices[-2]],
+        'year': [next_date.year],
+        'month': [next_date.month],
+        'dayofweek': [0],  # default placeholder
+        **lag_dict
     }
 
-    # One-hot encode product columns
+    # --- Safe one-hot encoding ---
     for col in scaler.feature_names_in_:
         if col.startswith('product_'):
             input_data[col] = [1 if col == f'product_{clean_product}' else 0]
 
-    # Predict
-    df_input = pd.DataFrame(input_data)[scaler.feature_names_in_]
+    df_input = pd.DataFrame(input_data)
+    # Keep only the columns that exist in the scaler (avoid KeyErrors)
+    df_input = df_input.reindex(columns=scaler.feature_names_in_, fill_value=0)
     df_scaled = scaler.transform(df_input)
     predicted_price = model.predict(df_scaled)[0]
 
-    # Prepare chart data
-    data['price_date'] = data['price_date'].dt.strftime('%Y-%m-%d')
-    hist_data = data.tail(12).to_dict(orient='records')
+    hist_data = data.tail(12).copy()
+    hist_data['price_date'] = hist_data['price_date'].dt.strftime('%Y-%m-%d')
 
     info = {
         "name": clean_product.replace("_", " ").title(),
-        "historical": hist_data,
+        "historical": hist_data.to_dict(orient='records'),
         "predicted_price": float(predicted_price),
-        "next_month": f"{next_year}-{next_month:02d}-01",
+        "next_month": f"{next_date.year}-{next_date.month:02d}-01"
     }
 
     return render_template(f'{template_name}.html', info=info)
@@ -401,46 +402,47 @@ def predict(product):
     if product not in df.columns:
         return jsonify({'error': f'Product "{product}" not found in dataset.'}), 400
 
-    df = df[['price_date', product]].dropna()
-    df['price_date'] = pd.to_datetime(df['price_date'])
-    df = df.sort_values('price_date')
+    data = df[['price_date', product]].dropna()
+    data['price_date'] = pd.to_datetime(data['price_date'])
+    data = data.sort_values('price_date')
 
-    if len(df) < 3:
+    if data.shape[0] < 1:
         return jsonify({'error': f'Not enough data for "{product}"'}), 400
 
-    last_prices = df[product].values[-2:]
-    last_date = df['price_date'].max()
+    last_prices = data[product].values
+    last_date = data['price_date'].max()
+    next_date = last_date + pd.DateOffset(months=1)
 
-    next_month = (last_date + pd.DateOffset(months=1)).month
-    next_year = (last_date + pd.DateOffset(months=1)).year
-
-    # ✅ Normalize product name for model encoding
-    clean_product = product.replace("c_", "")
+    # --- Generate lag features safely ---
+    lags = 12
+    lag_values = [last_prices[-i] if i <= len(last_prices) else 0 for i in range(1, lags + 1)]
+    lag_dict = {f'price_lag{i+1}': [lag_values[i]] for i in range(lags)}
 
     input_data = {
-        'year': [next_year],
-        'month': [next_month],
-        'dayofweek': [0],
-        'price_lag1': [last_prices[-1]],
-        'price_lag2': [last_prices[-2]],
+        'year': [next_date.year],
+        'month': [next_date.month],
+        'dayofweek': [0],  # placeholder
+        **lag_dict
     }
 
-    # ✅ Match one-hot encoding used in model training
+    clean_product = product.replace("c_", "")
     for col in scaler.feature_names_in_:
         if col.startswith('product_'):
             input_data[col] = [1 if col == f'product_{clean_product}' else 0]
 
-    df_input = pd.DataFrame(input_data)[scaler.feature_names_in_]
+    df_input = pd.DataFrame(input_data)
+    df_input = df_input.reindex(columns=scaler.feature_names_in_, fill_value=0)
     df_scaled = scaler.transform(df_input)
-
     predicted_price = model.predict(df_scaled)[0]
-    hist_data = df.tail(12).to_dict(orient='records')
+
+    hist_data = data.tail(12).copy()
+    hist_data['price_date'] = hist_data['price_date'].dt.strftime('%Y-%m-%d')
 
     return jsonify({
         'product': product,
-        'historical': hist_data,
+        'historical': hist_data.to_dict(orient='records'),
         'predicted_next_month': round(float(predicted_price), 2),
-        'next_month': f"{next_year}-{next_month:02d}-01"
+        'next_month': f"{next_date.year}-{next_date.month:02d}-01"
     })
 
 
