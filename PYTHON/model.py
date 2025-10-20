@@ -72,6 +72,8 @@ df_long["price_lag10"] = df_long.groupby(["product", "mkt_name"])["price"].shift
 df_long["price_lag11"] = df_long.groupby(["product", "mkt_name"])["price"].shift(11)
 df_long["price_lag12"] = df_long.groupby(["product", "mkt_name"])["price"].shift(12)
 
+df_long["price_roll6"] = df_long.groupby(["product", "mkt_name"])["price"].transform(lambda x: x.rolling(6, min_periods=1).mean())
+
 # One-hot encode product
 df_long = pd.get_dummies(df_long, columns=["product"], drop_first=True)
 
@@ -136,8 +138,8 @@ mse = mean_squared_error(y_test, y_pred)
 print(f"Mean Squared Error (MSE) on test set: {mse:.4f}")
 
 # Save the model and scaler
-model_path = os.path.join(script_dir, "orfm3.pkl")
-scaler_path = os.path.join(script_dir, "s3.pkl")
+model_path = os.path.join(script_dir, "orfm4.pkl")
+scaler_path = os.path.join(script_dir, "s4.pkl")
 joblib.dump(best_rf_model, model_path)
 joblib.dump(scaler, scaler_path)
 

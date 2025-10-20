@@ -1,6 +1,6 @@
 from flask import Flask, render_template, jsonify, request, session, redirect, url_for
 from flask_cors import CORS
-import os, joblib, sqlite3, hashlib, pandas as pd
+import os, joblib, sqlite3, hashlib, pandas as pd, numpy as np
 
 # --- Base directory (FINAL PRILYTHIC root) ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -39,9 +39,9 @@ def init_db():
 init_db() 
 
 # --- Model and Scaler Paths ---
-model_path = os.path.join(BASE_DIR, 'PYTHON', 'orfm3.pkl')
-scaler_path = os.path.join(BASE_DIR, 'PYTHON', 's3.pkl')
-data_path = os.path.join(BASE_DIR, 'PYTHON', 'PHL_RTFP_mkt_2007_2025-09-23.csv')
+model_path = os.path.join(BASE_DIR, 'PYTHON', 'orfm4.pkl')
+scaler_path = os.path.join(BASE_DIR, 'PYTHON', 's4.pkl')
+data_path = os.path.join(BASE_DIR, 'PYTHON', 'Data.csv')
 
 # --- Load model and scaler ---
 model = joblib.load(model_path)
@@ -142,16 +142,20 @@ def dashboard():
         last_date = data['price_date'].max()
         next_date = last_date + pd.DateOffset(months=1)
 
-        # --- Safe lag features ---
+        # --- Lag features ---
         lags = 12
         lag_values = [last_prices[-i] if i <= len(last_prices) else 0 for i in range(1, lags + 1)]
         lag_dict = {f'price_lag{i+1}': [lag_values[i]] for i in range(lags)}
 
+        # --- 6-month rolling mean ---
+        price_roll6 = np.mean(last_prices[-6:]) if len(last_prices) >= 1 else 0
+
         input_data = {
             'year': [next_date.year],
             'month': [next_date.month],
-            'dayofweek': [0],  # default placeholder
-            **lag_dict
+            'dayofweek': [0],  # placeholder
+            **lag_dict,
+            'price_roll6': [price_roll6]
         }
 
         # --- One-hot encoding ---
@@ -160,7 +164,6 @@ def dashboard():
                 input_data[col] = [1 if col == f'product_{clean_product}' else 0]
 
         df_input = pd.DataFrame(input_data)
-        # Align with scaler features safely
         df_input = df_input.reindex(columns=scaler.feature_names_in_, fill_value=0)
         df_scaled = scaler.transform(df_input)
         predicted_price = model.predict(df_scaled)[0]
@@ -168,9 +171,8 @@ def dashboard():
         hist_data = data.tail(12).copy()
         hist_data['price_date'] = hist_data['price_date'].dt.strftime('%Y-%m-%d')
 
-        clean_name = clean_product.replace("_", " ").title()
         products_info.append({
-            "name": clean_name,
+            "name": clean_product.replace("_", " ").title(),
             "historical": hist_data.to_dict(orient='records'),
             "predicted_price": float(predicted_price),
             "next_month": f"{next_date.year}-{next_date.month:02d}-01",
@@ -282,28 +284,30 @@ def render_product_page(product, template_name):
 
     last_prices = data[product].values
     last_date = data['price_date'].max()
+    next_date = last_date + pd.DateOffset(months=1)
 
-    # --- Generate lag features safely ---
+    # --- Lag features ---
     lags = 12
     lag_values = [last_prices[-i] if i <= len(last_prices) else 0 for i in range(1, lags + 1)]
     lag_dict = {f'price_lag{i+1}': [lag_values[i]] for i in range(lags)}
 
-    # --- Next month/year prediction ---
-    next_date = last_date + pd.DateOffset(months=1)
+    # --- 6-month rolling mean ---
+    price_roll6 = np.mean(last_prices[-6:]) if len(last_prices) >= 1 else 0
+
     input_data = {
         'year': [next_date.year],
         'month': [next_date.month],
-        'dayofweek': [0],  # default placeholder
-        **lag_dict
+        'dayofweek': [0],
+        **lag_dict,
+        'price_roll6': [price_roll6]
     }
 
-    # --- Safe one-hot encoding ---
+    # --- One-hot encoding ---
     for col in scaler.feature_names_in_:
         if col.startswith('product_'):
             input_data[col] = [1 if col == f'product_{clean_product}' else 0]
 
     df_input = pd.DataFrame(input_data)
-    # Keep only the columns that exist in the scaler (avoid KeyErrors)
     df_input = df_input.reindex(columns=scaler.feature_names_in_, fill_value=0)
     df_scaled = scaler.transform(df_input)
     predicted_price = model.predict(df_scaled)[0]
@@ -413,16 +417,20 @@ def predict(product):
     last_date = data['price_date'].max()
     next_date = last_date + pd.DateOffset(months=1)
 
-    # --- Generate lag features safely ---
+    # --- Lag features ---
     lags = 12
     lag_values = [last_prices[-i] if i <= len(last_prices) else 0 for i in range(1, lags + 1)]
     lag_dict = {f'price_lag{i+1}': [lag_values[i]] for i in range(lags)}
 
+    # --- 6-month rolling mean ---
+    price_roll6 = np.mean(last_prices[-6:]) if len(last_prices) >= 1 else 0
+
     input_data = {
         'year': [next_date.year],
         'month': [next_date.month],
-        'dayofweek': [0],  # placeholder
-        **lag_dict
+        'dayofweek': [0],
+        **lag_dict,
+        'price_roll6': [price_roll6]
     }
 
     clean_product = product.replace("c_", "")
