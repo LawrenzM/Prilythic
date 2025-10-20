@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static', filename='CSS/example.css')}}">
+    <title>Settings Page</title>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='JS/dash.js') }}"></script>
+    <div class="container">
+        <img src="{{url_for('static', filename='IMAGES/OFFICIAL_PRILYTHIC_LOGO.png')}}" alt="Prilythic-logo" class="ds_logo">
+        <br>
+        <button onclick="window.location.href='{{url_for('dashboard')}}'" class="DSbutton1">Dashboard</button>
+        <button onclick="window.location.href='{{url_for('categories')}}'" class="DSbutton2">Categories</button>
+        <button onclick="window.location.href='{{url_for('settings')}}'" class="DSbutton3">Settings</button>
+        <button onclick="confirmLogout()" class="DSbutton4" data-logout-url="{{ url_for('logout') }}">Logout</button>
+    </div>
+    <div class="search">
+        <input type="search_box" class="search" placeholder="Search...">
+        <img src="{{url_for('static', filename='IMAGES/Search_icon.png')}}" alt="search icon" class="search-icn">
+        <h1 class="dstxt">Account Settings</h1>
+    </div>
+
+    <div class="set_wall">
+        <button class="set_but1" onclick="window.location.href='{{url_for('settings')}}'">Edit Profile</button>
+        <button class="set_but2" onclick="window.location.href='{{url_for('preferences')}}'">Preferences</button>
+        <button class="set_but3" onclick="window.location.href='{{url_for('change_user')}}'">Change Username</button>
+        <button class="set_but4" onclick="window.location.href='{{url_for('change_pass')}}'">Change Password</button>
+        <button class="set_but5" onclick="window.location.href='{{url_for('change_email')}}'">Change Email</button>
+    </div>
+
+    <div class="wall2">
+        <h1 class="txt">My Profile</h1>
+        <p class="pdsgn">Change your profile picture</p>
+        <div class="profile_upload">
+            <button class="upload_but">Upload</button>
+            <label class="label_settings">Name</label>
+            <input type="display_name" placeholder="Enter Display Name" class="upload_text_box">
+            <label class="label_settings1">Bio</label>
+            <input type="bio" placeholder="Enter Bio" class="upload_text_box">
+            <button class="button_save">Save</button>
+        </div>
+    </div>
+
+    <div class="profile">
+        <h1 class="profile_name">Welcome to Prilythic, User!</h1>>
+            <h1 class="profile_icon"></h1>
+        </div>
+    </div>
+
+</body>
+</html>

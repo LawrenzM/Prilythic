@@ -1,0 +1,719 @@
+body{
+  background-color: #F0EFFB;
+  display:flex;
+}
+
+.container{
+    background: linear-gradient(#504CAB 75%, #645ED4 100%);
+    position:fixed;
+    height:1300px;
+    width:500px;
+    top:50px;
+    left:100px;
+    border-radius: 50px;
+}
+
+.ds_logo{
+    position:absolute;
+    height:300px;
+    width:300px;
+    left:100px;
+
+}
+
+.ds_seeAll{
+    position:absolute;
+    background-color: #645ED4;
+    color:white;
+    width:150px;
+    height:60px;
+    border-radius: 100px;
+    left:480px;
+    top: 40px;
+}
+
+.dstxt{
+    position:absolute;
+    color: #645ED4;
+    top:150px;
+    left:220px;
+
+}
+h1{
+    position:absolute;
+    left:130px;
+    top:50px;
+    color: white;
+    font-size: 50px;
+}
+.DSbutton1, .DSbutton2, .DSbutton3, .DSbutton4{
+    position:fixed;
+    width:400px;
+    height:100px;
+    border-radius: 20px;
+    border: 0px;
+    background-color: #645ED4;
+    color:white;
+    left: 150px;
+    cursor: pointer;
+    transition: 1s;
+    font-size:20px;
+}
+
+.DSbutton1 {top:350px;}
+.DSbutton2 {top:550px;}
+.DSbutton3 {top: 750px;}
+.DSbutton4 {top:950px;}
+
+button:hover{
+    background-color: #A29EE5;
+    transform: scaleX(1.0);
+    transform: scaleY(1.0);
+    transition: 1s;
+}
+
+button:after{
+    background-color: #645ED4;
+    transform: scaleX(1.0);
+    transform: scaleY(1.0);
+    transition: 1s;
+}
+
+.search{
+    padding:20px;
+    position:absolute;
+    top:10px;
+    left:500px;
+}
+
+input[type="search_box"]{
+    position:absolute;
+    left:220px;
+    top:50px;
+    height:80px;
+    width:400px;
+    border-radius: 30px;
+}
+
+.search-icn{
+    position:absolute;
+    height:50px;
+    width:50px;
+    left:550px;
+    top:65px;
+
+}
+
+.wall{
+    background-color: #FFFFFF;
+    padding:20px;
+    position:absolute;
+    top:300px;
+    left:725px;
+    width:1400px;
+    height: 1045px;
+    border-radius: 10px;
+}
+
+.wall2{
+    background-color: #FFFFFF;
+    padding:20px;
+    position:absolute;
+    top:300px;
+    left:1150px;
+    width: 1700px;
+    height: 1045px;
+    border-radius: 30px;
+}
+.wall_categories{
+    background-color: #F0EFFB;
+    padding:20px;
+    top:300px;
+    left:25px;
+    width:3400px;
+    height: 2045px;
+    border-radius: 10px;
+}
+.wall_categories2{
+    background-color: #F0EFFB;
+    padding:20px;
+    top:300px;
+    left:25px;
+    width:3400px;
+    height: 2045px;
+    border-radius: 10px;
+}
+
+.category_select{
+    position:absolute;
+    background-color: white;
+    top:300px;
+    left:725px;
+    width: 1500px;
+    height: 1645px;
+    border-radius: 30px;
+}
+
+
+.set_wall{
+    position:absolute;
+    background-color: white;
+    top:300px;
+    left:725px;
+    width: 400px;
+    height: 1045px;
+    border-radius: 30px;
+}
+
+.favorite_wall{
+    background-color: white;
+    padding:20px;
+    position:absolute;
+    top:300px;
+    left:2200px;
+    width:700px;
+    height: 1045px;
+    border-radius: 10px;
+}
+
+.fav_txt{
+    color:#645ED4;
+    position:absolute;
+    top:115px;
+    left:100px;
+    font-size: 35px;
+}
+
+.ds_p_txt{
+     position:absolute;
+    color:#645ED4;
+    font-size: 35px;
+    left:100px;
+    top:120px;
+}
+
+.ds_wall_txt{
+    color:#645ED4;
+    position: absolute;
+    top:50px;
+    left: 100px;
+}
+.p_txt{
+    position:absolute;
+    color:#645ED4;
+    font-size: 35px;
+    left:100px;
+    top:120px;
+}
+.wall_txt{
+    color:#645ED4;
+    position: absolute;
+    top:60px;
+    left: 100px;
+}
+
+.setting_btn{
+    position: absolute;
+}
+
+.txt{
+   color: #645ED4;
+}
+
+.profile_name{
+    position: absolute;
+    font-size: 40px;
+    color: #645ED4;
+    left:2100px;
+    top:80px;
+}
+
+.upload_but{
+    position:absolute;
+    width:280px;
+    height:80px;
+    top:360px;
+    background-color: #645ED4;
+    color:white;
+    border-radius:50px;
+    left:10px;
+    cursor: pointer;
+    transition: 1s;
+}
+
+.label_settings{
+    position: absolute;
+    font-size:25px;
+    color:#504CAB;
+    left:590px;
+    top:40px;
+}
+
+.label_settings1{
+    position: absolute;
+    font-size:25px;
+    color:#504CAB;
+    left:590px;
+    top:240px;
+}
+
+.profile_icon{
+    position:absolute;
+    padding:40px;
+    height:40px;
+    width:20px;
+    top:60px;
+    left:2630px;
+    border-radius: 50px;
+    border:1px solid black;
+    background-color: white;
+}
+
+.profile_upload{
+    position:absolute;
+    padding:40px;
+    height:300px;
+    width:300px;
+    top:200px;
+    left:150px;
+    background-color: #D9D9D9;
+    border-radius: 150px;
+}
+
+
+
+.user_config{
+    position: fixed;
+    top:550px;
+    left: 700px;
+
+}
+
+.notif_pref{
+    position:absolute;
+    font-size: 25px;
+    top:150px;
+    left:70px;
+    color: #645ED4;
+}
+
+
+.confirm_user_set{
+    position:absolute;
+    color: #645ED4;
+    font-size: 25px;
+    border-radius:50px;
+    top:210px;
+    left:590px;
+    cursor: pointer;
+    transition: 1s;
+}
+.pdsgn{
+    color: #A29EE5;
+    position: absolute;
+    font-size: 30px;
+    top:120px;
+    left: 130px;
+    font-weight: bold;
+}
+
+.window{
+    background-color:#FFFFFF;
+    position:absolute;
+    padding:20px;
+    height:1000px;
+    width:2100px;
+    border-radius: 20px;
+    top:200px;
+    left:50px;
+}
+
+.dashboard-profile{
+    position:fixed;
+    background-color: white;
+    padding:20px;
+    height:10px;
+    width:10px;
+    border-radius: 100px;
+}
+
+p{
+    color:white;
+}
+
+.settings_panel{
+    background-color: #E0DFF6;
+    padding:20px;
+    position:absolute;
+    height:950px;
+    width:500px;
+    top:20px;
+    border-radius: 10px;
+
+}
+
+.settings_panel2{
+    background-color: #E0DFF6;
+    padding:20px;
+    position:absolute;
+    height:950px;
+    width:1375px;
+    top:0px;
+    left:650px;
+    border-radius: 20px;
+}
+.set_but1, .set_but2, .set_but3, .set_but4, .set_but5, .set_but6{
+    position:absolute;
+    background-color: white;
+    font-size: 30px;
+    color:#645ED4;
+    height:100px;
+    width:200px;
+    left:70px;
+    border-radius: 50px;
+    border: 0px;
+    cursor: pointer;
+    transition: 1s;
+    font-weight: bold;
+    font-size: 25px;
+    font-family: sans-serif;
+}
+
+.set_but1 { top: 50px; }
+.set_but2 { top: 180px; }
+.set_but3 { top: 310px; }
+.set_but4 { top: 440px; }
+.set_but5 { top: 570px; }
+.set_but6 { top: 700px; }
+
+.p_set{
+    position:absolute;
+    font-size: 30px;
+    top:120px;
+    left:130px;
+
+}
+
+.edit_profile{
+    background-color:#FFFFFF;
+    position:absolute;
+    padding:20px;
+    height:300px;
+    width:300px;
+    border-radius: 150px;
+    top:200px;
+    left:200px;
+    
+}
+
+
+input[type="display_name"]{
+    position:absolute;
+    background-color: #F0EFFB;
+    padding:20px;
+    height:80px;
+    width:600px;
+    top:100px;
+    left:580px;
+    border-radius: 20px;
+}
+input[type="bio"]{
+    position:absolute;
+    background-color: #F0EFFB;
+    padding:20px;
+    height:80px;
+    width:600px;
+    top:300px;
+    left:580px;
+    border-radius: 20px;
+}
+
+input[type="user"]{
+    position:absolute;
+    background-color: #F0EFFB;
+    padding:20px;
+    height:80px;
+    width:600px;
+    top:100px;
+    left:580px;
+    border-radius: 20px;
+}
+
+.button_save{
+    position:absolute;
+    width:280px;
+    height:80px;
+    top:450px;
+    background-color: #645ED4;
+    color:white;
+    border-radius:50px;
+    left:740px;
+    cursor: pointer;
+    transition: 1s;
+}
+
+.p_display{
+    position:absolute;
+    font-size: 20px;
+    top:130px;
+    left:680px;
+    color: #645ED4
+}
+.p_bio{
+    position:absolute;
+    font-size: 20px;
+    top:310px;
+    left:680px;
+    color: #645ED4
+}
+.p_location{
+    position:absolute;
+    font-size: 20px;
+    top:490px;
+    left:680px;
+    color: #645ED4
+}
+
+input[type="checkbox"]{
+    position:absolute;
+    top:200px;
+    left:70px;
+    width:30px;
+    height:30px;
+}
+
+.pref_but1, .pref_but2{
+    position:absolute;
+    font-size: 30px;
+    width:280px;
+    height:80px;
+    background-color: #645ED4;
+    color:white;
+    border-radius:50px;
+    left:1100px;
+    cursor: pointer;
+    transition: 1s;
+}
+
+.pref_but1 {top:300px;}
+.pref_but2 {top:500px;}
+
+.notif_pref{
+    position:absolute;
+    font-size: 40px;
+    top:300px;
+    left:350px;
+    color: #645ED4;
+    font-weight: bold;
+}
+
+.dark_mode_pref{
+    position:absolute;
+    font-size: 40px;
+    top:500px;
+    left:350px;
+    color: #645ED4;
+    font-weight: bold;
+}
+
+.category_bar{
+    position:absolute;
+    background-color: #645ED4;
+    padding:30px;
+    width:1300px;
+    height:120px;
+    top:500px;
+    left:775px;
+    border-radius: 50px;
+}
+
+.transparent1{
+    position:absolute;
+    background-color: #645ED4;
+    border:white 4px solid;
+    border-radius: 50px;
+    color:white;
+    font-size:20px;
+    top:30px;
+    width: 220px;
+    height:70px;
+}
+
+.transparent2{
+   position:absolute;
+    background-color: #645ED4;
+    border:white 4px solid;
+    border-radius: 50px;
+    color:white;
+    font-size:20px;
+    top:30px;
+    width:220px;
+    height:70px;
+}
+
+.transparent3{
+    position:absolute; 
+    background-color: #645ED4;
+    border:white 4px solid;
+    border-radius: 50px;
+    color:white;
+    font-size:20px;
+    top:30px;
+    width:220px;
+    height:70px;
+}
+
+.price-chart-canvas {
+    width: 100% !important;   /* fills container width */
+    max-height: 300px;        /* set max height */
+}
+.scrollable-price-charts {
+    max-height: 1000px;        /* scrollable container height */
+    overflow-y: auto;         /* enable vertical scroll */
+}
+
+
+.transparent1 {left:200px}
+.transparent2 {left:520px}
+.transparent3 {left: 850px}
+
+.fav_txt_price{
+    color:#645ED4;
+    position:absolute;
+    top:130px;
+    left:100px;
+    font-size: 27px;
+}
+
+.fav_button_price{
+    position: absolute;
+    background-color: #645ED4;
+    color:white;
+    border-radius: 50px;
+    width:300px;
+    height:75px;
+    top:250px;
+    left:200px;
+    cursor:pointer;
+    transition:1s;
+}
+
+.category_btn1{
+    position:absolute;
+    background-color: #645ED4;
+    color:white;
+    font-size: 30px;
+    height:600px;
+    width:600px;
+    top: 350px;
+    left:100px;
+    border-radius: 50px;
+    border: 0px;
+    cursor: pointer;
+    transition: 1s;
+    font-weight: bold;
+    font-size: 25px;
+    font-family: sans-serif;
+}
+
+.category_btn2{
+    position:absolute;
+    background-color: #645ED4;
+    color:white;
+    font-size: 30px;
+    top:350px;
+    height:600px;
+    width:600px;
+    border-radius: 50px;
+    border: 0px;
+    cursor: pointer;
+    transition: 1s;
+    font-weight: bold;
+    font-size: 25px;
+    font-family: sans-serif;
+    left:800px;
+}
+
+.category_btn3{
+    position:absolute;
+    background-color: #645ED4;
+    color:white;
+    font-size: 30px;
+    height:600px;
+    width:600px;
+    top:1000px;
+    border-radius: 50px;
+    border: 0px;
+    cursor: pointer;
+    transition: 1s;
+    font-weight: bold;
+    font-size: 25px;
+    font-family: sans-serif;
+    left:100px;
+}
+
+.category_btn4{
+     position:absolute;
+    background-color: #645ED4;
+    color:white;
+    font-size: 30px;
+    height:600px;
+    width:600px;
+    top:1000px;
+    border-radius: 50px;
+    border: 0px;
+    cursor: pointer;
+    transition: 1s;
+    font-weight: bold;
+    font-size: 25px;
+    font-family: sans-serif;
+    left:800px;
+}
+
+.category_btn5{
+     position:absolute;
+    background-color: #645ED4;
+    color:white;
+    font-size: 30px;
+    height:600px;
+    width:600px;
+    top:1650px;
+    border-radius: 50px;
+    border: 0px;
+    cursor: pointer;
+    transition: 1s;
+    font-weight: bold;
+    font-size: 25px;
+    font-family: sans-serif;
+    left:100px;
+}
+
+.price_button1, .price_button2, .price_button3, .price_button4{
+    position: absolute;
+    background-color: #645ED4;
+    color:white;
+    font-size: 25px;
+    width:200px;
+    border:0px;
+    border-radius: 50px;
+    height:100px;
+    cursor: pointer;
+    transition: 1s;
+    top: 850px;
+}
+
+.price_button1 {left:200px;}
+.price_button2 {left:450px;}
+.price_button3 {left:700px;}
+.price_button4 {left:950px;} 
+
+.favorite_wall_price{
+    background-color: white;
+    padding:20px;
+    position:absolute;
+    top:300px;
+    left:2200px;
+    width:700px;
+    height: 1045px;
+    border-radius: 10px; 
+}

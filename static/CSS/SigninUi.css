@@ -1,0 +1,118 @@
+html{
+  margin:0;
+  height:100%;
+  overflow:hidden;
+}
+
+body{
+  background: conic-gradient(#160DAF, #433CC4, #706ADA);
+}
+
+.container{
+  background-color: white;
+  position:absolute;
+  width:850px;
+  height:1300px;
+  top:80px;
+  left:1100px;
+  border-radius: 25px;
+}
+
+input[type="text"], input[type="password"]{
+  width:500px;
+  height:80px;
+  position: absolute;
+  border-radius: 20px;
+  background-color: #f1f0ff;
+}
+
+.User{
+  font-size: 20px;
+  font-family: sans-serif;
+  position: absolute;
+  left:150px;
+  top: 230px;
+}
+
+.Pass{
+  font-size: 20px;
+  font-family: sans-serif;
+  position: absolute;
+  left:150px;
+  top:400px;
+}
+
+.Pass1{
+  font-size: 20px;
+  font-family: sans-serif;
+  position: absolute;
+  left:150px;
+  top:560px;
+}
+
+input[name="username"]{ top:280px; left:150px; }
+input[name="password"]{ top:450px; left:150px; }
+input[name="confirm_password"]{ top:610px; left:150px; }
+
+#error-message {
+  position: absolute;
+  top:720px; 
+  left:250px; 
+  font-size: 20px;
+  color: red;
+  text-align: center;
+  width: 300px;
+}
+
+button{
+  position:absolute;
+  font-size: 20px;
+  width:320px;
+  height:70px;
+  left:250px;
+  top: 820px;
+  border-radius: 25px;
+  background-color: #706ADA;
+  color:white;
+  cursor: pointer;
+  transition:1s;
+}
+
+button:hover{
+  background-color: #837edd;
+  transform: scaleX(1.0);
+  transform: scaleY(1.0);
+  transition: 0.5s;
+}
+
+h1{
+  position: absolute;
+  font-size: 50px;
+  top:60px;
+  left:90px;
+}
+
+.PlsLogin{
+  position: absolute;
+  top:130px;
+  left:90px;
+  font-size: 20px;
+}
+
+.NoAcc{
+  position: absolute;
+  top:760px;
+  left:250px;
+  font-size: 20px;
+}
+
+.Logo{
+  position:absolute;
+  top:90px;
+  left:960px;
+}
+
+img{
+  width:700px;
+  height:700px;
+}

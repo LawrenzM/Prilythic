@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static', filename='CSS/example.css')}}">
+    <title>Categories Page</title>
+</head> <!--ACCESS VIA APP.PY (CHANGE DIRECTORY TO WHERE APP.PY IS LOCATED(cd "FINAL PRILYTHIC"), THEN RUN APP.PY ("python app.py") )-->
+<body>  <!--ERROR LINES ARE NORMAL, IT IS FLASK INTEGRATION-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='JS/dashboard.js') }}"></script>
+    <div class="container">
+        <img src="{{url_for('static', filename='IMAGES/OFFICIAL_PRILYTHIC_LOGO.png')}}" alt="Prilythic-logo" class="ds_logo">
+        <br>
+        <button onclick="window.location.href='{{url_for('dashboard')}}'" class="DSbutton1">Dashboard</button>
+        <button onclick="window.location.href='{{url_for('categories')}}'" class="DSbutton2">Categories</button>
+        <button onclick="window.location.href='{{url_for('settings')}}'" class="DSbutton3">Settings</button>
+        <button onclick="confirmLogout()" class="DSbutton4" data-logout-url="{{ url_for('logout') }}">Logout</button>
+    </div>
+        <div class="profile">
+            <h1 class="profile_name">Welcome to Prilythic, User!</h1>
+            <h1 class="profile_icon"></h1>
+        </div>
+    <div class="search">
+        <input type="search_box" class="search" placeholder="Search...">
+        <img src="{{url_for('static', filename='IMAGES/Search_icon.png')}}" alt="search icon" class="search-icn">
+        <h1 class="dstxt">Category</h1>
+    </div>
+    <div class="wall">
+        <h1 class="wall_txt">Categories</h1>
+        <p class="p_txt">Select multiple categories to choose from </p>
+    </div>
+        <div class="category_bar">
+            <button class="transparent1" onclick="window.location.href='{{ url_for('meat') }}'">Meat</button>
+            <button class="transparent2" onclick="window.location.href='{{ url_for('vegetable') }}'">Vegetables</button>
+            <button class="transparent3" onclick="window.location.href='{{ url_for('cook') }}'">Cooking Essentials</button>
+        </div>
+
+        <script src="{{ url_for('static', filename='JS/dash.js') }}"></script>
+</body>
+</html>

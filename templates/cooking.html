@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static', filename='CSS/example.css')}}">
+    <title>Poultry Meat Page</title>
+</head>
+<body>
+    <div class = "container">
+    <h1>PRILYTHIC</h1>
+        <br>
+        <button onclick="window.location.href='{{url_for('dashboard')}}'" class = "button1">Dashboard</button>
+        <button onclick="window.location.href='{{url_for('categories')}}'" class = "button2">Categories</button>
+        <button onclick="window.location.href='{{url_for('settings')}}'" class = "button3">Settings</button>
+        <button onclick="window.location.href='{{url_for('logout')}}'" class = "button4">Logout</button>
+        <div class ="search">
+        <div class="bar">
+        <input type ="search_box" placeholder ="Search...">
+        <div class = "search2">
+            <img src="{{url_for('static', filename='IMAGES/Search icon.png')}}" alt="search-icon" class = "img5">
+            <div class ="wall">
+        <h1 class ="txt">Cooking Essential Categories</h1>
+        <p class = pdsgn>Choose a Ingredient!</p>
+
+        <div class="window">
+            <button class = "opt1" onclick="window.location.href='cooking_oil.html'" class ="meat_btn1">Cooking Oil</button>
+            <button class = "opt2" onclick="window.location.href='salt.html'" class = "meat_btn2">Salt</button>
+            <button class = "opt3" onclick="window.location.href='pepper.html'" class = "meat_btn3">Pepper</button>
+        </div>    
+            </div>
+            </div>
+            </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    </div>
+</body>
+</html>

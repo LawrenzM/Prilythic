@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='CSS/LoginUI.css') }}">
+  <title>Login Page</title>
+</head> 
+<body>
+  <div class="container">
+    <h1>Welcome to Prilythic</h1>
+    <p class = "PlsLogin">Please login to your account to continue.</p>
+
+    <form method="POST" action="/">
+      <label class="User">Username</label><br>
+      <input type="text" name="username" placeholder=" Enter Username"><br>
+
+      <label class="Pass">Password</label><br>
+      <input type="password" name="password" placeholder=" Enter Password"><br>
+      
+      {% if error %}
+        <p id="error-message" style="color: red;">{{ error }}</p>
+      {% endif %}
+      <button type="submit">Submit</button>
+    </form>
+    <p class="NoAcc">No Account? <a href="{{ url_for('signup') }}">Click Here!</a></p>
+    <p class="ForgotPass">Forgot Password? <a href="Password.html">Click Here!</a></p>
+    <div class="Logo">
+      <img src="{{url_for('static', filename='IMAGES/OFFICIAL_PRILYTHIC_LOGO.png')}}" alt="JOIN PRILYTHIC TODAY!">
+    </div>
+      </div>
+  </div>
+
+  <!-- Move script here -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
+</body>
+</html>
+

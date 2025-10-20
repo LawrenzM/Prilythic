@@ -1,0 +1,12 @@
+iso3,country,ticker,full_name,units,food_index_weight,data_coverage,r2_imputation
+PHL,Philippines,beans,Habiuelas (Baguio Beans),KG,1,90%,0.96
+PHL,Philippines,cabbage,"Cabbage (average of all types)",KG,1,95%,0.91
+PHL,Philippines,carrots,Carrots,KG,1,95%,0.91
+PHL,Philippines,eggs,Eggs (avg medium),Unit,12,98%,0.99
+PHL,Philippines,meat_beef_chops,"Meat (beef, chops with bones)",KG,1,98%,0.98
+PHL,Philippines,meat_chicken_whole,"Meat (chicken, whole)",KG,1,98%,0.98
+PHL,Philippines,meat_pork,Meat (pork),KG,1,98%,0.98
+PHL,Philippines,onions,Onions (red),KG,1,95%,0.93
+PHL,Philippines,potatoes,White Potato,KG,1,95%,0.94
+PHL,Philippines,rice,"Rice (regular, milled)",KG,1,98%,0.98
+PHL,Philippines,tomatoes,Tomatoes,KG,1,95%,0.89
