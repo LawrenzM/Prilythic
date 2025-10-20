@@ -151,7 +151,7 @@ input[type="search_box"]{
     top:300px;
     left:725px;
     width: 1500px;
-    height: 1645px;
+    height: 2300px;
     border-radius: 30px;
 }
 
@@ -717,4 +717,46 @@ input[type="checkbox"]{
     width:700px;
     height: 1045px;
     border-radius: 10px; 
+}
+
+/* Dark Mode Class */
+body.dark-mode {
+    background-color: #1a1a1a !important;
+}
+body.dark-mode.vegetable-page,
+body.dark-mode.cook-page,
+body.dark-mode.meat-page {
+    background-color: #000 !important;
+}
+
+/* Keep the background black but panels white for category pages */
+
+
+/* Keep panels white in dark mode */
+body.dark-mode .wall,
+body.dark-mode .wall2,
+body.dark-mode .set_wall,
+body.dark-mode .favorite_wall,
+body.dark-mode .wall_categories,
+body.dark-mode .wall_categories2 {
+    background-color: #ffffff !important;
+}
+body.dark-mode .category_select {
+    background-color: #ffffff !important;
+    z-index: 1;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+body.dark-mode .wall,
+body.dark-mode .wall2,
+body.dark-mode .set_wall,
+body.dark-mode .favorite_wall,
+body.dark-mode .wall_categories,
+body.dark-mode .wall_categories2 {
+    background-color: #ffffff !important;
+}
+body.dark-mode.vegetable-page .category_select,
+body.dark-mode.meat-page .category_select,
+body.dark-mode.cook-page .category_select {
+  background-color: #000 !important;
+  color: #fff;
 }

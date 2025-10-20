@@ -20,6 +20,8 @@
   console.log("Products info from Flask:", {{ products_info | default([]) | tojson }});
   console.log("Selected products (from Flask session):", {{ selected_products | default([]) | tojson }});
 </script>
+    <!-- Dark mode support -->
+    <script src="{{ url_for('static', filename='JS/dark_mode.js') }}"></script>
 </head> <!--ACCESS VIA APP.PY (CHANGE DIRECTORY TO WHERE APP.PY IS LOCATED(cd "FINAL PRILYTHIC"), THEN RUN APP.PY ("python app.py") )-->
 <body>  <!--ERROR LINES ARE NORMAL, IT IS FLASK INTEGRATION-->
 
