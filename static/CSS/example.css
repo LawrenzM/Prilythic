@@ -1,16 +1,16 @@
 body{
-  background-color: #F0EFFB;
+  background-color: #F0EFFB ;
   display:flex;
 }
 
 .container{
-    background: linear-gradient(#504CAB 75%, #645ED4 100%);
-    position:fixed;
-    height:1300px;
-    width:500px;
-    top:50px;
-    left:100px;
-    border-radius: 50px;
+    background: linear-gradient(#504CAB 75%, #645ED4 100%) !important;
+    position:fixed !important;
+    height:1300px !important;
+    width:500px !important;
+    top:50px !important;
+    left:100px !important;
+    border-radius: 50px !important;
 }
 
 .ds_logo{
@@ -37,7 +37,9 @@ body{
     color: #645ED4;
     top:150px;
     left:220px;
-
+}
+body.dark-mode .dstxt {
+    color: #ffffff !important;
 }
 h1{
     position:absolute;
@@ -106,34 +108,34 @@ input[type="search_box"]{
 }
 
 .wall{
-    background-color: #FFFFFF;
-    padding:20px;
-    position:absolute;
-    top:300px;
-    left:725px;
-    width:1400px;
-    height: 1045px;
-    border-radius: 10px;
+    background-color: #FFFFFF !important;
+    padding:20px !important;
+    position:absolute !important;
+    top:300px !important;
+    left:725px !important;
+    width:1400px !important;
+    height: 1045px !important;
+    border-radius: 10px !important;
 }
 
 .wall2{
-    background-color: #FFFFFF;
-    padding:20px;
-    position:absolute;
-    top:300px;
-    left:1150px;
-    width: 1700px;
-    height: 1045px;
-    border-radius: 30px;
+    background-color: #FFFFFF !important;
+    padding:20px !important;
+    position:absolute !important; 
+    top:300px !important;
+    left:1150px !important;
+    width: 1700px !important;
+    height: 1045px !important;
+    border-radius: 30px !important;
 }
 .wall_categories{
-    background-color: #F0EFFB;
-    padding:20px;
-    top:300px;
-    left:25px;
-    width:3400px;
-    height: 2045px;
-    border-radius: 10px;
+    background-color: #F0EFFB !important;
+    padding:20px !important;
+    top:300px !important;
+    left:25px !important;
+    width:3400px !important;
+    height: 2045px !important;
+    border-radius: 10px !important;
 }
 .wall_categories2{
     background-color: #F0EFFB;
@@ -157,13 +159,13 @@ input[type="search_box"]{
 
 
 .set_wall{
-    position:absolute;
-    background-color: white;
-    top:300px;
-    left:725px;
-    width: 400px;
-    height: 1045px;
-    border-radius: 30px;
+    position:absolute !important;
+    background-color: white !important;
+    top:300px !important;
+    left:725px !important;
+    width: 400px !important;
+    height: 1045px !important;
+    border-radius: 30px !important;
 }
 
 .favorite_wall{
@@ -784,11 +786,33 @@ body.dark-mode .wall_categories,
 body.dark-mode .wall_categories2 {
     background-color: #ffffff !important;
 }
+
+body.dark-mode .dstxt,
+body.dark-mode .profile_name,
+body.dark-mode .profile .profile_name {
+    color: #ffffff !important;
+}
 body.dark-mode.vegetable-page .category_select,
 body.dark-mode.meat-page .category_select,
 body.dark-mode.cook-page .category_select {
   background-color: #000 !important;
   color: #fff;
+}
+
+/* Ensure outer walls are transparent on meat/cook/vegetable pages in dark mode */
+body.dark-mode.meat-page .wall_categories,
+body.dark-mode.meat-page .wall_categories2,
+body.dark-mode.meat-page .wall,
+body.dark-mode.meat-page .wall2,
+body.dark-mode.meat-page .favorite_wall {
+        background-color: transparent !important;
+}
+
+/* Also hide the white-looking wrappers for category area */
+body.dark-mode.meat-page .window,
+body.dark-mode.meat-page .dashboard-profile,
+body.dark-mode.meat-page .profile_upload {
+        background-color: transparent !important;
 }
 
 /* Dark mode support for simulation elements */

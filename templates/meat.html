@@ -24,22 +24,19 @@
         <img src="{{ url_for('static', filename='IMAGES/Search_icon.png') }}" alt="search icon" class="search-icn">
         <h1 class="dstxt">Category</h1>
     </div>
-    <div class="wall_categories">
-    </div>
-    <div class="wall_categories2">
     <div class="profile">
         <h1 class="profile_name">Welcome to Prilythic, User!</h1>
-            <h1 class="profile_icon"></h1>
-        </div>
+        <h1 class="profile_icon"></h1>
     </div>
-
+    <!-- Move category_select outside wall_categories2 to prevent overlap -->
     <div class="category_select">
-         <h1 class="wall_txt">Meat</h1>
+        <h1 class="wall_txt">Meat</h1>
         <p class="p_txt">Select multiple products to choose from </p>
         <div class="category_choices">
             <button class="category_btn1" onclick="window.location.href='{{ url_for('chicken') }}'">Whole Chicken</button>
             <button class="category_btn2" onclick="window.location.href='{{ url_for('beef') }}'">Beef Chops</button>
             <button class="category_btn3" onclick="window.location.href='{{ url_for('pork') }}'">Pork Meat</button>
+        </div>
     </div>
 </body>
 </html>
