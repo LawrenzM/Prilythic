@@ -22,6 +22,7 @@
             console.log("Products info from Flask:", {{ products_info | default([]) | tojson }});
             console.log("Selected products (from Flask session):", {{ selected_products | default([]) | tojson }});
         </script>
+
 </head> <!--ACCESS VIA APP.PY (CHANGE DIRECTORY TO WHERE APP.PY IS LOCATED(cd "FINAL PRILYTHIC"), THEN RUN APP.PY ("python app.py") )-->
 <body>  <!--ERROR LINES ARE NORMAL, IT IS FLASK INTEGRATION-->
 
@@ -104,6 +105,29 @@
 
     <script>
         const productsInfo = {{ products_info|tojson }};
+        // Initialize time range button functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handlers for time range buttons
+            document.querySelectorAll('[data-product][data-months]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-product');
+                    const months = parseInt(this.getAttribute('data-months'));
+                    
+                    // Update active state
+                    this.parentElement.querySelectorAll('.btn').forEach(btn => {
+                        btn.classList.remove('active', 'btn-primary');
+                        btn.classList.add('btn-outline-primary');
+                    });
+                    this.classList.remove('btn-outline-primary');
+                    this.classList.add('active', 'btn-primary');
+                    
+                    // Update chart
+                    if (typeof updateChart === 'function') {
+                        updateChart(productId, months);
+                    }
+                });
+            });
+        }); 
     </script>
 
 </body>

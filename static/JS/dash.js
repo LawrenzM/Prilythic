@@ -23,8 +23,13 @@ window.simulateProduct = function(productId) {
         setTimeout(() => card.style.border = '', 1000);
     }
     
-    // ADD THE CURRENT PREDICTED PRICE TO HISTORICAL DATA (as today's price)
-    addToHistoricalData(productId, currentPredictedPrice);
+    // ADVANCE THE SIMULATION DATE FIRST
+    window.simulationDate.setMonth(window.simulationDate.getMonth() + 1);
+    const simulationDateStr = window.simulationDate.toISOString().slice(0, 7);
+    console.log(`📅 ADVANCING to simulation month: ${simulationDateStr}`);
+    
+    // ADD THE CURRENT PREDICTED PRICE TO HISTORICAL DATA
+    addToHistoricalData(productId, currentPredictedPrice, simulationDateStr);
     
     // GENERATE A NEW PREDICTION for next month
     const newPrediction = generateNewPrediction(productId, currentPredictedPrice);
@@ -36,7 +41,7 @@ window.simulateProduct = function(productId) {
     // Update next month display
     const nextMonthElement = document.getElementById(`next-month-${productId}`);
     if (nextMonthElement) {
-        const newMonth = getNextMonthText(nextMonthElement.textContent);
+        const newMonth = getNextMonthText();
         nextMonthElement.textContent = newMonth;
         console.log(`📅 Updated month to: ${newMonth}`);
     }
@@ -46,26 +51,7 @@ window.simulateProduct = function(productId) {
     
     // Update chart with current time range
     if (typeof updateChart === 'function') {
-        // Get current months from active button or default to current view
-        // Try to find which time range button is active
-        const buttons = document.querySelectorAll(`button[onclick*="${productId}"]`);
-        let currentMonths = 12;
-        
-        for (let button of buttons) {
-            if (button.textContent.includes('M') || button.textContent.includes('Y')) {
-                if (button.classList.contains('btn-primary') || 
-                    button.classList.contains('active') ||
-                    button.style.backgroundColor !== '') {
-                    // Extract months from button text
-                    if (button.textContent.includes('3')) currentMonths = 3;
-                    else if (button.textContent.includes('6')) currentMonths = 6;
-                    else if (button.textContent.includes('9')) currentMonths = 9;
-                    else if (button.textContent.includes('1Y')) currentMonths = 12;
-                    break;
-                }
-            }
-        }
-        
+        const currentMonths = getCurrentTimeRange(productId);
         console.log(`🔄 Updating chart with ${currentMonths} months view`);
         updateChart(productId, currentMonths);
     }
@@ -73,7 +59,7 @@ window.simulateProduct = function(productId) {
     console.log(`✅ Simulation complete for ${productId}`);
 };
 
-// NEW FUNCTION: Get the currently selected time range for a product
+// Get the currently selected time range for a product
 function getCurrentTimeRange(productId) {
     // Find the active button for this product
     const activeButton = document.querySelector(`[data-product="${productId}"].btn-primary`);
@@ -97,32 +83,15 @@ function getCurrentTimeRange(productId) {
     console.log(`📅 No active time range found, defaulting to 12 months`);
     return 12;
 }
+
 function generateNewPrediction(productId, currentPrice) {
     console.log(`🔮 Generating prediction for: ${productId} from ${currentPrice}`);
     
-    // Product-specific volatility based on your CSV data patterns
-    const productVolatility = {
-        'beans': 0.08,
-        'cabbage': 0.15,
-        'carrots': 0.12,
-        'eggs': 0.06,
-        'meat_beef_chops': 0.10,
-        'meat_chicken_whole': 0.07,
-        'meat_pork': 0.09,
-        'onions': 0.20,
-        'potatoes': 0.18,
-        'rice': 0.05,
-        'tomatoes': 0.25
-    };
+    // Get historical data for this product
+    const historicalData = window[`historical_${productId}`] || [];
     
-    // Find matching product volatility
-    let volatility = 0.1; // default
-    for (const [key, value] of Object.entries(productVolatility)) {
-        if (productId.toLowerCase().includes(key)) {
-            volatility = value;
-            break;
-        }
-    }
+    // Calculate volatility dynamically from historical data
+    const volatility = calculateVolatility(historicalData, productId);
     
     // Generate realistic price movement
     const randomChange = (Math.random() - 0.5) * 2 * volatility;
@@ -131,12 +100,95 @@ function generateNewPrediction(productId, currentPrice) {
     // Ensure reasonable minimum price
     const finalPrice = Math.max(newPrice, currentPrice * 0.3);
     
-    console.log(`🔮 Prediction details - Volatility: ${volatility}, Change: ${(randomChange * 100).toFixed(1)}%, New Price: ${finalPrice.toFixed(2)}`);
+    console.log(`🔮 Prediction details - Volatility: ${volatility.toFixed(4)}, Change: ${(randomChange * 100).toFixed(1)}%, New Price: ${finalPrice.toFixed(2)}`);
     
     return parseFloat(finalPrice.toFixed(2));
 }
 
-function addToHistoricalData(productId, newPrice) {
+// Calculate volatility from historical data
+function calculateVolatility(historicalData, productId = '') {
+    if (!historicalData || historicalData.length < 2) return 0.1;
+    
+    // Extract prices using field detection
+    const priceField = detectPriceField(historicalData[0], productId);
+    const prices = historicalData.map(entry => entry[priceField]).filter(p => p !== undefined && p !== null);
+    
+    if (prices.length < 2) return 0.1;
+    
+    // Calculate percentage changes
+    const changes = [];
+    for (let i = 1; i < prices.length; i++) {
+        const change = (prices[i] - prices[i-1]) / prices[i-1];
+        changes.push(change);
+    }
+    
+    // Return standard deviation of changes as volatility
+    const mean = changes.reduce((sum, change) => sum + change, 0) / changes.length;
+    const variance = changes.reduce((sum, change) => sum + Math.pow(change - mean, 2), 0) / changes.length;
+    const calculatedVolatility = Math.sqrt(variance);
+    
+    console.log(`Calculated volatility for ${productId}: ${calculatedVolatility.toFixed(4)} from ${changes.length} data points`);
+    
+    return Math.max(0.02, Math.min(0.5, calculatedVolatility)); // Clamp between 2% and 50%
+}
+
+// Better field detection
+function detectPriceField(entry, productId = '') {
+    if (!entry) {
+        console.error('No entry provided for field detection');
+        return null;
+    }
+    
+    console.log(`Detecting price field for: ${productId}`, entry);
+    
+    // Strategy 1: Exact match
+    if (entry[productId] !== undefined) {
+        console.log(`Found exact match: ${productId}`);
+        return productId;
+    }
+    
+    // Strategy 2: Case-insensitive match
+    const lowerProductId = productId.toLowerCase();
+    for (let key in entry) {
+        if (key.toLowerCase() === lowerProductId) {
+            console.log(`Found case-insensitive match: ${key}`);
+            return key;
+        }
+    }
+    
+    // Strategy 3: Common prefix patterns
+    const prefixes = ['c_', 'o_', 'price_', 'val_', 'cost_', ''];
+    for (let prefix of prefixes) {
+        const fieldName = prefix + productId.toLowerCase();
+        if (entry[fieldName] !== undefined) {
+            console.log(`Found prefixed match: ${fieldName}`);
+            return fieldName;
+        }
+    }
+    
+    // Strategy 4: Find any numeric field that's not a date
+    for (let key in entry) {
+        if (key !== 'price_date' && key !== 'date' && key !== 'month' && 
+            key !== 'year' && key !== 'timestamp' &&
+            typeof entry[key] === 'number') {
+            console.log(`Using numeric field as price: ${key}`);
+            return key;
+        }
+    }
+    
+    // Strategy 5: Last resort - any field with numeric value
+    for (let key in entry) {
+        if (!isNaN(parseFloat(entry[key])) && isFinite(entry[key])) {
+            console.log(`Using parseable numeric field: ${key}`);
+            return key;
+        }
+    }
+    
+    console.error(`No suitable price field found for: ${productId}`, entry);
+    return null;
+}
+
+function addToHistoricalData(productId, newPrice, specificDate = null) {
     console.log(`📈 Adding to historical data for ${productId}`);
     
     if (!window[`historical_${productId}`]) {
@@ -147,16 +199,21 @@ function addToHistoricalData(productId, newPrice) {
     const historicalData = window[`historical_${productId}`];
     console.log(`Current historical data length: ${historicalData.length}`);
     
-    // Use CURRENT month for the simulated price (not next month)
-    const currentDate = getCurrentMonth();
-    console.log(`📅 Adding simulated price for current month: ${currentDate}`);
+    // Use the provided specific date or current simulation date
+    const dateToUse = specificDate || window.simulationDate.toISOString().slice(0, 7);
+    console.log(`📅 Adding simulated price for: ${dateToUse}`);
+    
+    // CHECK FOR EXISTING ENTRY FOR THIS DATE FIRST
+    const existingEntryIndex = historicalData.findIndex(entry => 
+        (entry.price_date || entry.date) === dateToUse
+    );
     
     // CREATE DATA IN THE SAME FORMAT AS YOUR CSV
     const sampleEntry = historicalData[0];
     let priceField = 'price';
     
     if (sampleEntry) {
-        // Try to find the correct price field name used in your CSV
+        // Try to find the correct price field name
         const possibleFields = ['c_' + productId.toLowerCase(), 'o_' + productId.toLowerCase(), 'price'];
         for (let field of possibleFields) {
             if (sampleEntry[field] !== undefined) {
@@ -167,11 +224,11 @@ function addToHistoricalData(productId, newPrice) {
         console.log(`🔍 Using price field: ${priceField}`);
     }
     
-    // Create new entry in the same format as your original data
+    // Create new entry
     const newEntry = {
-        price_date: currentDate,
-        date: currentDate,
-        [priceField]: newPrice, // Use the correct field name
+        price_date: dateToUse,
+        date: dateToUse,
+        [priceField]: newPrice,
         simulated: true
     };
     
@@ -179,122 +236,123 @@ function addToHistoricalData(productId, newPrice) {
     if (sampleEntry) {
         Object.keys(sampleEntry).forEach(key => {
             if (!newEntry[key] && key !== 'price_date' && key !== 'date') {
-                newEntry[key] = sampleEntry[key]; // Copy other fields
+                newEntry[key] = sampleEntry[key];
             }
         });
     }
     
-    historicalData.push(newEntry);
-    console.log(`➕ Added new entry:`, newEntry);
+    // REPLACE existing entry or ADD new one
+    if (existingEntryIndex !== -1) {
+        console.log(`🔄 Replacing existing entry for ${dateToUse}`);
+        historicalData[existingEntryIndex] = newEntry;
+    } else {
+        console.log(`➕ Adding new entry for ${dateToUse}`);
+        historicalData.push(newEntry);
+    }
+    
+    console.log(`✅ Historical data updated. New length: ${historicalData.length}`);
 }
 
-// NEW FUNCTION: Get current month in YYYY-MM format
-function getCurrentMonth() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = (now.getMonth() + 1).toString().padStart(2, '0');
-    return `${year}-${month}`;
-}
-function getNextMonthFromLast(historicalData) {
-    if (!historicalData || historicalData.length === 0) {
-        return new Date().toISOString().slice(0, 7);
-    }
+function getNextMonthText() {
+    // Calculate the month AFTER the current simulation date
+    const nextMonthDate = new Date(window.simulationDate);
+    nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
     
-    const lastEntry = historicalData[historicalData.length - 1];
-    let lastDate = lastEntry.price_date || lastEntry.date;
-    
-    if (!lastDate) {
-        return new Date().toISOString().slice(0, 7);
-    }
-    
-    let year, month;
-    
-    if (lastDate.includes('-')) {
-        [year, month] = lastDate.split('-').map(Number);
-    } else if (lastDate.includes('/')) {
-        const parts = lastDate.split('/');
-        if (parts.length === 3) {
-            if (parts[0].length === 4) {
-                [year, month] = [parseInt(parts[0]), parseInt(parts[1])];
-            } else {
-                [month, , year] = parts.map(Number);
-            }
-        }
-    }
-    
-    if (!year || !month) {
-        return new Date().toISOString().slice(0, 7);
-    }
-    
-    let nextMonth = month + 1;
-    let nextYear = year;
-    
-    if (nextMonth > 12) {
-        nextMonth = 1;
-        nextYear++;
-    }
-    
-    return `${nextYear}-${nextMonth.toString().padStart(2, '0')}`;
-}
-
-function getNextMonthText(currentText) {
-    console.log(`📅 Getting next month from: "${currentText}"`);
-    
-    // If currentText is a date like "2025-02-01", parse it
-    if (currentText.includes('-')) {
-        const dateMatch = currentText.match(/(\d{4})-(\d{2})/);
-        if (dateMatch) {
-            const year = parseInt(dateMatch[1]);
-            const month = parseInt(dateMatch[2]);
-            
-            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                           'July', 'August', 'September', 'October', 'November', 'December'];
-            
-            let nextMonth = month;
-            let nextYear = year;
-            
-            if (nextMonth >= 12) {
-                nextMonth = 1;
-                nextYear++;
-            } else {
-                nextMonth++;
-            }
-            
-            const result = `${months[nextMonth - 1]} ${nextYear}`;
-            console.log(`📅 Next month: ${result}`);
-            return result;
-        }
-    }
-    
-    // Fallback: increment from current display
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 
                    'July', 'August', 'September', 'October', 'November', 'December'];
     
-    let currentMonth = -1;
-    let currentYear = new Date().getFullYear();
+    const year = nextMonthDate.getFullYear();
+    const month = nextMonthDate.getMonth(); // 0-11
     
-    for (let i = 0; i < months.length; i++) {
-        if (currentText.toLowerCase().includes(months[i].toLowerCase())) {
-            currentMonth = i;
-            break;
+    const result = `${months[month]} ${year}`;
+    console.log(`📅 Displaying prediction for: ${result}`);
+    return result;
+}
+
+function initializeDynamicTimeline(historicalData, productId) {
+    if (!historicalData || historicalData.length === 0) {
+        console.warn(`No historical data for ${productId}`);
+        return historicalData;
+    }
+    
+    console.log(`🔄 Creating dynamic timeline for ${productId}`);
+    
+    // Check if data already has valid dates
+    const hasValidDates = historicalData.some(entry => 
+        entry.price_date || entry.date
+    );
+    
+    if (hasValidDates) {
+        console.log(`Using existing dates from CSV for ${productId}`);
+        // Ensure all entries have proper date format
+        const fixedData = historicalData.map(entry => {
+            const dateStr = entry.price_date || entry.date;
+            return {
+                ...entry,
+                price_date: dateStr,
+                date: dateStr
+            };
+        });
+        return fixedData;
+    }
+    
+    // Fallback: create timeline ending at current date
+    const endDate = new Date();
+    const startDate = new Date(endDate);
+    startDate.setMonth(startDate.getMonth() - (historicalData.length - 1));
+    
+    const fixedData = [];
+    historicalData.forEach((entry, index) => {
+        const dataDate = new Date(startDate);
+        dataDate.setMonth(startDate.getMonth() + index);
+        
+        const year = dataDate.getFullYear();
+        const month = (dataDate.getMonth() + 1).toString().padStart(2, '0');
+        const dateStr = `${year}-${month}`;
+        
+        fixedData.push({
+            ...entry,
+            price_date: dateStr,
+            date: dateStr
+        });
+    });
+    
+    console.log(`📈 Dynamic timeline for ${productId}:`, {
+        start: fixedData[0]?.price_date,
+        end: fixedData[fixedData.length - 1]?.price_date,
+        dataPoints: fixedData.length
+    });
+    
+    return fixedData;
+}
+
+function setupDynamicSimulationDate() {
+    // Try to get the last date from historical data
+    if (window.products && window.products.length > 0) {
+        const firstProduct = window.products[0];
+        const historicalData = window[`historical_${firstProduct}`] || [];
+        
+        if (historicalData.length > 0) {
+            const lastEntry = historicalData[historicalData.length - 1];
+            const lastDate = lastEntry.price_date || lastEntry.date;
+            
+            if (lastDate) {
+                const [year, month] = lastDate.split('-').map(Number);
+                window.simulationDate = new Date(year, month - 1, 1);
+                window.simulationDate.setMonth(window.simulationDate.getMonth() + 1); // Start from next month
+                console.log('🎯 Dynamic simulation starts from:', window.simulationDate.toISOString().slice(0, 7));
+                return;
+            }
         }
     }
     
-    const yearMatch = currentText.match(/\b(20\d{2})\b/);
-    if (yearMatch) currentYear = parseInt(yearMatch[1]);
-    
-    let nextMonth = currentMonth + 1;
-    let nextYear = currentYear;
-    if (nextMonth >= 12) {
-        nextMonth = 0;
-        nextYear++;
-    }
-    
-    return `${months[nextMonth]} ${nextYear}`;
+    // Fallback: start from current month
+    window.simulationDate = new Date();
+    window.simulationDate.setDate(1);
+    console.log('🎯 Fallback simulation starts from:', window.simulationDate.toISOString().slice(0, 7));
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    // Wait until Flask injects the products list
     if (!window.products || window.products.length === 0) {
         console.warn("No products found — check Flask injection or session data.");
         return;
@@ -302,17 +360,35 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log("Loaded products from Flask:", window.products);
 
-    window.products.forEach(function(id) {  // Only sanitized IDs
-        const historical = window['historical_' + id] || [];
+    // Dynamic simulation date setup
+    setupDynamicSimulationDate();
+
+    window.products.forEach(function(id) {
+        let historical = window['historical_' + id] || [];
+        
+        // Use dynamic timeline initialization
+        historical = initializeDynamicTimeline(historical, id);
+        window['historical_' + id] = historical;
+        
         if (historical.length === 0) {
             console.warn(`No historical data found for product ${id}`);
             return;
         }
-        drawChart(id, historical, 3);
+        
+        console.log(`Initial dates for ${id}:`, historical.map(h => h.price_date || h.date));
+        
+        // Verify we can find price field
+        const priceField = detectPriceField(historical[0], id);
+        if (!priceField) {
+            console.error(`Cannot display ${id}: No price field detected`);
+            return;
+        }
+        
+        drawChart(id, historical, 12);
     });
 });
 
-window.updateChart = function(id, months) {  // Only sanitized IDs
+window.updateChart = function(id, months) {
     const data = window['historical_' + id] || [];
     if (data.length === 0) {
         console.warn(`Cannot update chart — no data for ${id}`);
@@ -337,73 +413,41 @@ function drawChart(id, historical, months) {
     const hist = historical.slice(-actualMonths);
     const ctx = chartElem.getContext("2d");
 
-    // Destroy existing chart to avoid overlap
+    // Destroy existing chart
     if (window[`chart_${id}`]) window[`chart_${id}`].destroy();
 
-    // DEBUG: Log what we're about to chart
-    console.log(`📊 Drawing chart for ${id} with ${hist.length} data points`);
-    console.log('Sample data point:', hist[0]);
-
-    // Find the correct price field - handle both CSV format and simulated data
-    let priceKey = null;
-    
-    // First, try to find product-specific fields (c_beans, o_beans, etc.)
-    const productName = id.toLowerCase().replace('_', '');
-    const possibleFields = [
-        'c_' + productName,  // Central price
-        'o_' + productName,  // Observed price  
-        'price',             // Simulated data
-        'beans', 'cabbage', 'carrots', 'eggs', 'meat_beef_chops', 
-        'meat_chicken_whole', 'meat_pork', 'onions', 'potatoes', 'rice', 'tomatoes'
-    ];
-    
-    for (let field of possibleFields) {
-        if (hist[0][field] !== undefined) {
-            priceKey = field;
-            console.log(`🔍 Found price key: ${priceKey}`);
-            break;
-        }
-    }
-    
+    // Find the correct price field
+    const priceKey = detectPriceField(hist[0], id);
     if (!priceKey) {
-        // Last resort: find any numeric field that's not a date
-        for (let field in hist[0]) {
-            if (field !== 'price_date' && field !== 'date' && field !== 'simulated' && 
-                typeof hist[0][field] === 'number') {
-                priceKey = field;
-                console.log(`🔍 Using numeric field as price: ${priceKey}`);
-                break;
-            }
-        }
-    }
-    
-    if (!priceKey) {
-        console.error(`❌ No price field found in data:`, hist[0]);
+        console.error(`No price field found for ${id}. Available fields:`, Object.keys(hist[0]));
+        showChartError(chartElem, `No price data found for ${id}`);
         return;
     }
 
-    // Prepare chart data
     const labels = hist.map(h => {
         const date = h.price_date || h.date;
-        // Format date for better display
         if (date && date.includes('-')) {
             const [year, month] = date.split('-');
-            return `${month}/${year}`;
+            const monthNum = parseInt(month);
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                              'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const monthName = monthNames[monthNum - 1] || month;
+            return `${monthName} ${year}`;
         }
         return date;
     });
     
     const prices = hist.map(h => h[priceKey]);
 
-    console.log(`📈 Chart data - Labels:`, labels);
-    console.log(`📈 Chart data - Prices:`, prices);
+    console.log(`Chart for ${id}:`, { labels, prices, priceKey });
 
+    // Create the chart
     window[`chart_${id}`] = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
-                label: id.replace(/_/g, " ").replace(/-/g, "/") + " Price",
+                label: id + " Price",
                 data: prices,
                 borderColor: 'rgba(54,162,235,1)',
                 backgroundColor: 'rgba(54,162,235,0.2)',
@@ -412,7 +456,6 @@ function drawChart(id, historical, months) {
                 tension: 0.25,
                 pointRadius: 3,
                 pointBackgroundColor: function(context) {
-                    // Color simulated points differently
                     const index = context.dataIndex;
                     const originalIndex = historical.length - hist.length + index;
                     return historical[originalIndex]?.simulated ? 'red' : 'rgba(54,162,235,1)';
@@ -423,19 +466,12 @@ function drawChart(id, historical, months) {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                x: {
-                    title: { display: true, text: 'Date' },
-                    ticks: { autoSkip: true, maxTicksLimit: 10 }
-                },
-                y: {
-                    title: { display: true, text: 'Price' },
-                    beginAtZero: false
-                }
+                x: { title: { display: true, text: 'Date' } },
+                y: { title: { display: true, text: 'Price' }, beginAtZero: false }
             },
             plugins: {
                 legend: { display: true },
                 tooltip: { 
-                    enabled: true,
                     callbacks: {
                         label: function(context) {
                             const index = context.dataIndex;
@@ -450,7 +486,16 @@ function drawChart(id, historical, months) {
     });
 }
 
-// Keep your logout confirmation intact
+// Error display for charts
+function showChartError(canvasElement, message) {
+    canvasElement.style.display = 'none';
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'chart-error';
+    errorDiv.innerHTML = `<div class="alert alert-warning">${message}</div>`;
+    canvasElement.parentNode.appendChild(errorDiv);
+}
+
+// Logout confirmation
 function confirmLogout() {
     if (confirm("Are you sure you want to log out?")) {
         window.location.href = '/logout';
