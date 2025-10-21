@@ -113,7 +113,7 @@ input[type="search_box"]{
     position:absolute !important;
     top:300px !important;
     left:725px !important;
-    width:1400px !important;
+    width:1600px !important;
     height: 1045px !important;
     border-radius: 10px !important;
 }
@@ -523,11 +523,13 @@ input[type="checkbox"]{
     position:absolute;
     background-color: #645ED4;
     padding:30px;
-    width:1300px;
+    width:1500px;
     height:120px;
     top:500px;
     left:775px;
     border-radius: 50px;
+    overflow-x: visible;
+    min-width: 1400px;
 }
 
 .transparent1{
@@ -540,6 +542,7 @@ input[type="checkbox"]{
     top:30px;
     width: 220px;
     height:70px;
+    left:100px;
 }
 
 .transparent2{
@@ -552,6 +555,7 @@ input[type="checkbox"]{
     top:30px;
     width:220px;
     height:70px;
+    left:340px;
 }
 
 .transparent3{
@@ -564,6 +568,33 @@ input[type="checkbox"]{
     top:30px;
     width:220px;
     height:70px;
+    left:580px;
+}
+
+.transparent4{
+    position:absolute; 
+    background-color: #645ED4;
+    border:white 4px solid;
+    border-radius: 50px;
+    color:white;
+    font-size:20px;
+    top:30px;
+    width:220px;
+    height:70px;
+    left:820px;
+}
+
+.transparent5{
+    position:absolute; 
+    background-color: #645ED4;
+    border:white 4px solid;
+    border-radius: 50px;
+    color:white;
+    font-size:20px;
+    top:30px;
+    width:220px;
+    height:70px;
+    left:1060px;
 }
 
 .price-chart-canvas {
@@ -576,9 +607,11 @@ input[type="checkbox"]{
 }
 
 
-.transparent1 {left:200px}
-.transparent2 {left:520px}
-.transparent3 {left: 850px}
+.transparent1 {left:100px}
+.transparent2 {left:400px}
+.transparent3 {left:700px}
+.transparent4 {left:1000px}
+.transparent5 {left:1300px}
 
 .fav_txt_price{
     color:#645ED4;
@@ -616,80 +649,67 @@ input[type="checkbox"]{
     transition: 1s;
     font-weight: bold;
     font-size: 25px;
-    font-family: sans-serif;
 }
-
-.category_btn2{
-    position:absolute;
-    background-color: #645ED4;
-    color:white;
-    font-size: 30px;
-    top:350px;
-    height:600px;
-    width:600px;
-    border-radius: 50px;
-    border: 0px;
-    cursor: pointer;
-    transition: 1s;
-    font-weight: bold;
-    font-size: 25px;
-    font-family: sans-serif;
-    left:800px;
-}
-
-.category_btn3{
-    position:absolute;
-    background-color: #645ED4;
-    color:white;
-    font-size: 30px;
-    height:600px;
-    width:600px;
-    top:1000px;
-    border-radius: 50px;
-    border: 0px;
-    cursor: pointer;
-    transition: 1s;
-    font-weight: bold;
-    font-size: 25px;
-    font-family: sans-serif;
-    left:100px;
-}
-
-.category_btn4{
-     position:absolute;
-    background-color: #645ED4;
-    color:white;
-    font-size: 30px;
-    height:600px;
-    width:600px;
-    top:1000px;
-    border-radius: 50px;
-    border: 0px;
-    cursor: pointer;
-    transition: 1s;
-    font-weight: bold;
-    font-size: 25px;
-    font-family: sans-serif;
-    left:800px;
-}
-
-.category_btn5{
-     position:absolute;
-    background-color: #645ED4;
-    color:white;
-    font-size: 30px;
-    height:600px;
-    width:600px;
-    top:1650px;
-    border-radius: 50px;
-    border: 0px;
-    cursor: pointer;
-    transition: 1s;
-    font-weight: bold;
-    font-size: 25px;
-    font-family: sans-serif;
-    left:100px;
-}
+    .transparent1{
+        position:absolute;
+        background-color: #645ED4;
+        border:white 4px solid;
+        border-radius: 50px;
+        color:white;
+        font-size:20px;
+        top:30px;
+        width: 220px;
+        height:70px;
+        left:80px;
+    }
+    .transparent2{
+       position:absolute;
+        background-color: #645ED4;
+        border:white 4px solid;
+        border-radius: 50px;
+        color:white;
+        font-size:20px;
+        top:30px;
+        width:220px;
+        height:70px;
+        left:370px;
+    }
+    .transparent3{
+        position:absolute; 
+        background-color: #645ED4;
+        border:white 4px solid;
+        border-radius: 50px;
+        color:white;
+        font-size:20px;
+        top:30px;
+        width:220px;
+        height:70px;
+        left:660px;
+    }
+    .transparent4{
+        position:absolute; 
+        background-color: #645ED4;
+        border:white 4px solid;
+        border-radius: 50px;
+        color:white;
+        font-size:20px;
+        top:30px;
+        width:220px;
+        height:70px;
+        left:960px;
+    }
+    .transparent5{
+        position:absolute; 
+        background-color: #645ED4;
+        border:white 4px solid;
+        border-radius: 50px;
+        color:white;
+        font-size:20px;
+        top:30px;
+        width:220px;
+        height:70px;
+        left:1250px;
+    }
 
 .price_button1, .price_button2, .price_button3, .price_button4{
     position: absolute;
