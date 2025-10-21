@@ -41,7 +41,7 @@ init_db()
 # --- Model and Scaler Paths ---
 model_path = os.path.join(BASE_DIR, 'PYTHON', 'orfm4.pkl')
 scaler_path = os.path.join(BASE_DIR, 'PYTHON', 's4.pkl')
-data_path = os.path.join(BASE_DIR, 'PYTHON', 'Data.csv')
+data_path = os.path.join(BASE_DIR, 'PYTHON', 'Data2.csv')
 
 # --- Load model and scaler ---
 model = joblib.load(model_path)
@@ -535,7 +535,30 @@ def load_csv(filename):
         flash(f"Error loading file: {str(e)}", "danger")
         return redirect(url_for('settings'))
 
+@app.route('/delete_account', methods=['POST'])
+def delete_account():
+    if 'username' not in session:
+        return redirect(url_for('login'))
 
+    username = session['username']
+
+    try:
+        conn = sqlite3.connect('userAcc.db')
+        c = conn.cursor()
+        c.execute("DELETE FROM users WHERE username = ?", (username,))
+        conn.commit()
+        conn.close()
+
+        # Clear session after deleting
+        session.clear()
+        flash("Your account has been deleted successfully.", "info")
+        return redirect(url_for('login_page'))
+
+    except Exception as e:
+        flash("An error occurred while deleting your account.", "error")
+        print("Error deleting account:", e)
+        return redirect(url_for('settings'))
+    
 # --- Run the app ---
 if __name__ == '__main__':
     app.run(debug=True)
