@@ -24,8 +24,11 @@
 
       <label class="Pass1">Confirm Password</label><br>
       <input type="password" name="confirm_password" placeholder=" Confirm Password"><br>
-
-      <p id="error-message">{{ error }}</p>
+      
+      {% if error %}
+        <p id="error-message" style="color: red;">{{ error }}</p>
+      {% endif %}
+      
       <button type="submit">Register</button>
     </form>
 
