@@ -1,8 +1,8 @@
-from flask import Flask, render_template, jsonify, request, session, redirect, url_for
+from flask import Flask, render_template, jsonify, request, session, redirect, url_for, flash
 from flask_cors import CORS
 import os, joblib, sqlite3, hashlib, pandas as pd, numpy as np
 
-# --- Base directory (FINAL PRILYTHIC root) ---
+# --- Base directory (Prilythic root) ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(
@@ -46,6 +46,13 @@ data_path = os.path.join(BASE_DIR, 'PYTHON', 'Data.csv')
 # --- Load model and scaler ---
 model = joblib.load(model_path)
 scaler = joblib.load(scaler_path)
+
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
+DATA_FOLDER = os.path.join(BASE_DIR, 'data')
+
+# Create folders if they don't exist
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(DATA_FOLDER, exist_ok=True)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -246,7 +253,10 @@ def categories():
 # --- Settings Route ---
 @app.route('/settings')
 def settings():
-    return render_template('Settings.html')
+    # List all CSV files in DATA_FOLDER
+    csv_files = [f for f in os.listdir(DATA_FOLDER) if f.endswith('.csv')]
+    return render_template('Settings.html', csv_files=csv_files)
+
 
 # --- Preferences Route ---
 @app.route('/preferences')
@@ -453,6 +463,103 @@ def predict(product):
         'next_month': f"{next_date.year}-{next_date.month:02d}-01"
     })
 
+@app.route('/import_csv', methods=['POST'])
+def import_csv():
+    if 'csv_file' not in request.files:
+        flash("No file part", "danger")
+        return redirect(url_for('settings'))
+    
+    file = request.files['csv_file']
+    
+    if file.filename == '':
+        flash("No selected file", "danger")
+        return redirect(url_for('settings'))
+    
+    if file and file.filename.endswith('.csv'):
+        # Save to uploads folder first
+        filepath = os.path.join(UPLOAD_FOLDER, file.filename)
+        file.save(filepath)
+
+        try:
+            # Read new CSV
+            new_data = pd.read_csv(filepath)
+
+            # Determine target CSV in DATA_FOLDER
+            # We'll use the filename itself as the product CSV name
+            target_csv = os.path.join(DATA_FOLDER, file.filename)
+
+            if os.path.exists(target_csv):
+                # Merge with existing data (drop duplicates by 'price_date')
+                existing_data = pd.read_csv(target_csv)
+                combined = pd.concat([existing_data, new_data]).drop_duplicates(subset='price_date', keep='last')
+                combined.to_csv(target_csv, index=False)
+            else:
+                # Save as new CSV
+                new_data.to_csv(target_csv, index=False)
+
+            flash(f"CSV '{file.filename}' uploaded and database updated!", "success")
+        except Exception as e:
+            flash(f"Error processing CSV: {e}", "danger")
+        
+        return redirect(url_for('settings'))
+    
+    flash("Invalid file type. Please upload a CSV.", "danger")
+    return redirect(url_for('settings'))
+
+@app.route('/load_csv/<filename>')
+def load_csv(filename):
+    import os
+    import pandas as pd
+    from flask import render_template, redirect, url_for, flash
+
+    # Folder where all CSVs are stored
+    file_path = os.path.join(DATA_FOLDER, filename)
+
+    # Check if file exists
+    if not os.path.exists(file_path):
+        flash(f"❌ File '{filename}' not found.", "danger")
+        return redirect(url_for('settings'))
+
+    try:
+        # Load CSV data
+        df = pd.read_csv(file_path)
+
+        # Validate data
+        if df.empty:
+            flash(f"⚠️ The file '{filename}' is empty.", "warning")
+            return redirect(url_for('settings'))
+
+        # (Optional) Check for essential columns your model expects
+        required_columns = ['date', 'price']  # 👈 adjust this to your dataset
+        for col in required_columns:
+            if col not in df.columns:
+                flash(f"⚠️ Missing column: '{col}' in '{filename}'.", "warning")
+                return redirect(url_for('settings'))
+
+        # Sort by date if available
+        if 'date' in df.columns:
+            df['date'] = pd.to_datetime(df['date'], errors='coerce')
+            df = df.sort_values('date')
+
+        # ✅ Here you can integrate your prediction model (.pkl)
+        # Example:
+        # model = joblib.load(os.path.join(app.root_path, 'models', 'your_model.pkl'))
+        # predictions = model.predict(df[['price']].values)
+
+        # For now, we’ll just preview the data
+        table_preview = df.head(10).to_html(classes='table table-striped table-bordered', index=False)
+
+        return render_template(
+            'csv_view.html',
+            filename=filename,
+            table_preview=table_preview,
+            total_rows=len(df),
+            total_columns=len(df.columns)
+        )
+
+    except Exception as e:
+        flash(f"❌ Error loading file: {str(e)}", "danger")
+        return redirect(url_for('settings'))
 
 # --- Run the app ---
 if __name__ == '__main__':
