@@ -127,13 +127,13 @@ def dashboard():
         return redirect(url_for('product_select'))
 
     selected_products = session.get('selected_products', [])
-    products_info = []
 
-    df = pd.read_csv(data_path)
+    products_info = []
+    data_file = os.path.join(DATA_FOLDER, session['loaded_csv']) if session.get('loaded_csv') else data_path
+    df = pd.read_csv(data_file)
 
     for product in selected_products:
         clean_product = product.replace("c_", "")
-
         if product not in df.columns or df[product].dropna().shape[0] < 1:
             continue
 
@@ -160,7 +160,7 @@ def dashboard():
         input_data = {
             'year': [next_date.year],
             'month': [next_date.month],
-            'dayofweek': [0],  # placeholder
+            'dayofweek': [0],
             **lag_dict,
             'price_roll6': [price_roll6]
         }
@@ -190,6 +190,7 @@ def dashboard():
         products_info=products_info,
         selected_products=[p.replace("c_", "").replace("_", " ").title() for p in selected_products]
     )
+
 
 
 # --- Product Selection Page ---
@@ -282,7 +283,10 @@ def render_product_page(product, template_name):
     if 'username' not in session:
         return redirect(url_for('login_page'))
 
-    df = pd.read_csv(data_path)
+    # Use uploaded CSV if available, else default
+    data_file = os.path.join(DATA_FOLDER, session['loaded_csv']) if session.get('loaded_csv') else data_path
+    df = pd.read_csv(data_file)
+
     clean_product = product.replace("c_", "")
 
     if product not in df.columns or df[product].dropna().shape[0] < 1:
@@ -411,7 +415,9 @@ def logout():
 # --- Prediction API Route ---
 @app.route('/predict/<product>', methods=['GET'])
 def predict(product):
-    df = pd.read_csv(data_path)
+    
+    data_file = os.path.join(DATA_FOLDER, session['loaded_csv']) if session.get('loaded_csv') else data_path
+    df = pd.read_csv(data_file)
 
     if product not in df.columns:
         return jsonify({'error': f'Product "{product}" not found in dataset.'}), 400
@@ -508,58 +514,27 @@ def import_csv():
 
 @app.route('/load_csv/<filename>')
 def load_csv(filename):
-    import os
-    import pandas as pd
-    from flask import render_template, redirect, url_for, flash
-
-    # Folder where all CSVs are stored
     file_path = os.path.join(DATA_FOLDER, filename)
 
-    # Check if file exists
     if not os.path.exists(file_path):
-        flash(f"❌ File '{filename}' not found.", "danger")
+        flash(f"File '{filename}' not found.", "danger")
         return redirect(url_for('settings'))
 
     try:
-        # Load CSV data
         df = pd.read_csv(file_path)
-
-        # Validate data
         if df.empty:
-            flash(f"⚠️ The file '{filename}' is empty.", "warning")
+            flash(f"The file '{filename}' is empty.", "warning")
             return redirect(url_for('settings'))
 
-        # (Optional) Check for essential columns your model expects
-        required_columns = ['date', 'price']  # 👈 adjust this to your dataset
-        for col in required_columns:
-            if col not in df.columns:
-                flash(f"⚠️ Missing column: '{col}' in '{filename}'.", "warning")
-                return redirect(url_for('settings'))
-
-        # Sort by date if available
-        if 'date' in df.columns:
-            df['date'] = pd.to_datetime(df['date'], errors='coerce')
-            df = df.sort_values('date')
-
-        # ✅ Here you can integrate your prediction model (.pkl)
-        # Example:
-        # model = joblib.load(os.path.join(app.root_path, 'models', 'your_model.pkl'))
-        # predictions = model.predict(df[['price']].values)
-
-        # For now, we’ll just preview the data
-        table_preview = df.head(10).to_html(classes='table table-striped table-bordered', index=False)
-
-        return render_template(
-            'csv_view.html',
-            filename=filename,
-            table_preview=table_preview,
-            total_rows=len(df),
-            total_columns=len(df.columns)
-        )
+        # Save the filename in session so dashboard knows to use it
+        session['loaded_csv'] = filename
+        flash(f"CSV '{filename}' loaded successfully! Dashboard will use this data.", "success")
+        return redirect(url_for('dashboard'))
 
     except Exception as e:
-        flash(f"❌ Error loading file: {str(e)}", "danger")
+        flash(f"Error loading file: {str(e)}", "danger")
         return redirect(url_for('settings'))
+
 
 # --- Run the app ---
 if __name__ == '__main__':
