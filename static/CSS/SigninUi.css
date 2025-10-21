@@ -22,12 +22,13 @@ input[type="text"], input[type="password"]{
   width:500px;
   height:80px;
   position: absolute;
-  border-radius: 20px;
+  border-radius: 10px;
   background-color: #f1f0ff;
+  font-size: xx-large;
 }
 
 .User{
-  font-size: 20px;
+  font-size: 30px;
   font-family: sans-serif;
   position: absolute;
   left:150px;
@@ -35,7 +36,7 @@ input[type="text"], input[type="password"]{
 }
 
 .Pass{
-  font-size: 20px;
+  font-size: 30px;
   font-family: sans-serif;
   position: absolute;
   left:150px;
@@ -43,7 +44,7 @@ input[type="text"], input[type="password"]{
 }
 
 .Pass1{
-  font-size: 20px;
+  font-size: 30px;
   font-family: sans-serif;
   position: absolute;
   left:150px;
@@ -70,7 +71,7 @@ button{
   width:320px;
   height:70px;
   left:250px;
-  top: 820px;
+  top: 860px;
   border-radius: 25px;
   background-color: #706ADA;
   color:white;
@@ -103,9 +104,9 @@ h1{
 
 .NoAcc{
   position: absolute;
-  top:760px;
-  left:250px;
-  font-size: 20px;
+  top:780px;
+  left:215px;
+  font-size: 25px;
   color:#706ADA !important;
 }
 
