@@ -352,6 +352,28 @@ function setupDynamicSimulationDate() {
     console.log('🎯 Fallback simulation starts from:', window.simulationDate.toISOString().slice(0, 7));
 }
 
+// Add this function to your dash.js file
+function simulateAllProducts() {
+    console.log("=== STARTING SIMULATION FOR ALL PRODUCTS ===");
+    
+    if (!window.products || window.products.length === 0) {
+        console.error("❌ No products found to simulate");
+        return;
+    }
+    
+    console.log(`🔄 Simulating ${window.products.length} products`);
+    
+    // Simulate each product with a delay to avoid conflicts
+    window.products.forEach((productId, index) => {
+        setTimeout(() => {
+            console.log(`🎯 Simulating product: ${productId}`);
+            simulateProduct(productId);
+        }, index * 800); // 800ms delay between each simulation
+    });
+    
+    console.log("✅ All products simulation initiated");
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     // Dynamic simulation date setup
     setupDynamicSimulationDate();
