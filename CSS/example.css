@@ -717,3 +717,33 @@ input[type="checkbox"]{
     height: 1045px;
     border-radius: 10px; 
 }
+
+.csv-upload-section{
+    position: absolute;
+    top: 1360px;
+    left: 725px;
+    width: 400px;
+    padding: 20px;
+    background-color: #1e17a5;
+    color: #504CAB;  /* white text for readability */
+    border-radius: 20px;
+    z-index: 10;
+}
+
+
+.csv-upload-section {
+    color: #504CAB; /* deep purple, visible on white */
+}
+
+.csv-upload-section h3 {
+    color: #504CAB;
+}
+
+.csv-upload-section p {
+    color: #645ED4; /* lighter purple for instructions */
+}
+
+.text-truncate {
+    color: #1e17a5; /* darker color for file name preview */
+}
+

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ filename }} – Data Preview</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+    <h2>📊 Preview of {{ filename }}</h2>
+    <p>Total Rows: {{ total_rows }} | Columns: {{ total_columns }}</p>
+    <div class="table-responsive">
+        {{ table_preview|safe }}
+    </div>
+    <br>
+    <a href="{{ url_for('settings') }}" class="btn btn-secondary">⬅ Back to Settings</a>
+</body>
+</html>
