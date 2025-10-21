@@ -8,14 +8,14 @@ body{
   background: conic-gradient(#160DAF, #433CC4, #706ADA);
 }
 
-.container{
-  background-color: white;
-  position:absolute;
-  width:850px;
-  height:1300px;
-  top:80px;
-  left:1100px;
-  border-radius: 25px;
+.login-container {
+  background-color: white !important;
+  position: absolute !important;
+  width: 850px !important;
+  height: 1300px !important;
+  top: 80px !important;
+  left: 1100px !important;
+  border-radius: 25px !important;
 }
 
 input[type="text"], input[type="password"]{
@@ -90,13 +90,15 @@ h1{
   font-size: 50px;
   top:60px;
   left:90px;
+  color:#706ADA !important; 
 }
 
 .PlsLogin{
   position: absolute;
   top:130px;
-  left:90px;
+  left:130px;
   font-size: 20px;
+  color: #433CC4 !important;
 }
 
 .NoAcc{
@@ -104,6 +106,7 @@ h1{
   top:760px;
   left:250px;
   font-size: 20px;
+  color:#706ADA !important;
 }
 
 .Logo{
