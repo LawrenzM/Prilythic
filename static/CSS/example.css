@@ -123,7 +123,7 @@ input[type="search_box"]{
     padding:20px !important;
     position:absolute !important; 
     top:300px !important;
-    left:1150px !important;
+    left:1100px !important;
     width: 1700px !important;
     height: 1045px !important;
     border-radius: 30px !important;
@@ -162,8 +162,8 @@ input[type="search_box"]{
     position:absolute !important;
     background-color: white !important;
     top:300px !important;
-    left:725px !important;
-    width: 400px !important;
+    left:720px !important;
+    width: 350px !important;
     height: 1045px !important;
     border-radius: 30px !important;
 }
@@ -852,6 +852,19 @@ body.dark-mode .simulate-all-btn {
 
 body.dark-mode .simulate-all-btn:hover {
     background-color: #138496;
+}
+
+.scrollable-table {
+    max-height: 400px;  /* adjust as needed */
+    overflow-y: auto;   /* vertical scroll */
+}
+
+.scrollable-table table {
+    font-size: 18px;    /* bigger font size */
+}
+
+.scrollable-table th, .scrollable-table td {
+    vertical-align: middle;  /* centers text nicely */
 }
 
 /* Animation for simulation updates */

@@ -126,6 +126,7 @@ def dashboard():
     if not session.get('selected_products'):
         return redirect(url_for('product_select'))
 
+    username = session['username']
     selected_products = session.get('selected_products', [])
 
     products_info = []
@@ -188,10 +189,9 @@ def dashboard():
     return render_template(
         'Dashboard.html',
         products_info=products_info,
-        selected_products=[p.replace("c_", "").replace("_", " ").title() for p in selected_products]
+        selected_products=[p.replace("c_", "").replace("_", " ").title() for p in selected_products], 
+        username=username
     )
-
-
 
 # --- Product Selection Page ---
 @app.route("/productSelect", methods=["GET", "POST"])
@@ -248,35 +248,22 @@ def product_select():
 # --- Categories Route ---
 @app.route('/categories')
 def categories():
-    return render_template('Categories.html')
+    username = session['username']
+    return render_template('Categories.html', username=username)
 
 
 # --- Settings Route ---
 @app.route('/settings')
 def settings():
-    # List all CSV files in DATA_FOLDER
+    username = session['username']
     csv_files = [f for f in os.listdir(DATA_FOLDER) if f.endswith('.csv')]
-    return render_template('Settings.html', csv_files=csv_files)
+    return render_template('Settings.html', csv_files=csv_files, username=username)
 
 
 # --- Preferences Route ---
 @app.route('/preferences')
 def preferences():
     return render_template('preferences.html')  
-
-# --- Change Username Route ---
-@app.route('/change_user')
-def change_user():
-    return render_template('change_user.html')  
-# --- Change Password Route ---
-@app.route('/change_pass')
-def change_pass():
-    return render_template('change_pass.html')  
-
-# --- Change Email Route ---
-@app.route('/change_email')
-def change_email():
-    return render_template('change_email.html') 
 
 # --- Helper function for product pages ---
 def render_product_page(product, template_name):

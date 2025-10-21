@@ -21,8 +21,7 @@
         <button onclick="confirmLogout()" class="DSbutton4" data-logout-url="{{ url_for('logout') }}">Logout</button>
     </div>
         <div class="profile">
-            <h1 class="profile_name">Welcome to Prilythic, User!</h1>
-            <h1 class="profile_icon"></h1>
+            <h1 class="profile_name">Welcome to Prilythic, {{ username }}!</h1>
         </div>
     <div class="search">
         <input type="search_box" class="search" placeholder="Search...">
