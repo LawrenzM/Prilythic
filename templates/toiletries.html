@@ -5,12 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/example.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Toiletries Page</title>
-     <script src="{{ url_for('static', filename='JS/dark_mode.js') }}"></script>
+    <script src="{{ url_for('static', filename='JS/dark_mode.js') }}"></script>
+    <script src="{{ url_for('static', filename='JS/dash.js') }}"></script>
+    
+    <!-- Initialize products array for dash.js compatibility -->
+    <script>
+        window.products = [
+            {% if soap_info and soap_info.historical %}
+            "{{ soap_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') }}"{% if shampoo_info and shampoo_info.historical or toothpaste_info and toothpaste_info.historical or deodorant_info and deodorant_info.historical or toiletpaper_info and toiletpaper_info.historical %},{% endif %}
+            {% endif %}
+            {% if shampoo_info and shampoo_info.historical %}
+            "{{ shampoo_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') }}"{% if toothpaste_info and toothpaste_info.historical or deodorant_info and deodorant_info.historical or toiletpaper_info and toiletpaper_info.historical %},{% endif %}
+            {% endif %}
+            {% if toothpaste_info and toothpaste_info.historical %}
+            "{{ toothpaste_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') }}"{% if deodorant_info and deodorant_info.historical or toiletpaper_info and toiletpaper_info.historical %},{% endif %}
+            {% endif %}
+            {% if deodorant_info and deodorant_info.historical %}
+            "{{ deodorant_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') }}"{% if toiletpaper_info and toiletpaper_info.historical %},{% endif %}
+            {% endif %}
+            {% if toiletpaper_info and toiletpaper_info.historical %}
+            "{{ toiletpaper_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') }}"
+            {% endif %}
+        ];
+        
+        console.log("Toiletries products:", window.products);
+    </script>
 </head>
 <body>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    <script src="{{ url_for('static', filename='JS/dash.js') }}"></script>
+    
     <div class="container">
         <img src="{{ url_for('static', filename='IMAGES/OFFICIAL_PRILYTHIC_LOGO.png') }}" alt="Prilythic-logo" class="ds_logo">
         <br>
@@ -19,26 +44,270 @@
         <button onclick="window.location.href='{{url_for('settings')}}'" class="DSbutton3">Settings</button>
         <button onclick="confirmLogout()" class="DSbutton4" data-logout-url="{{ url_for('logout') }}">Logout</button>
     </div>
+
     <div class="search">
         <input type="search_box" class="search" placeholder="Search...">
         <img src="{{ url_for('static', filename='IMAGES/Search_icon.png') }}" alt="search icon" class="search-icn">
-        <h1 class="dstxt">Category</h1>
+        <h1 class="dstxt">Toiletries Category</h1>
     </div>
+
+    <div class="simulation-controls">
+        <button class="simulate-all-btn" onclick="simulateAllToiletriesProducts()">Simulate All Toiletries Products</button>
+    </div>
+
+    <div class="wall">
+        <!-- Debug info (hidden) -->
+        <div style="display: none;">
+            Soap Info: {{ soap_info|tojson }}
+            Shampoo Info: {{ shampoo_info|tojson }}
+            Toothpaste Info: {{ toothpaste_info|tojson }}
+            Deodorant Info: {{ deodorant_info|tojson }}
+            Toilet Paper Info: {{ toiletpaper_info|tojson }}
+        </div>
+        
+        <div class="scrollable-price-charts">
+            <!-- Soap Product -->
+            {% if soap_info and soap_info.historical %}
+            {% set soap_safe_name = soap_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') %}
+            <div class="row mb-4 product-card" id="product-{{ soap_safe_name }}">
+                <div class="col-md-8">
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-2">{{ soap_info.name }}</h5>
+                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ soap_safe_name }}')">
+                                Simulate
+                            </button>
+                        </div>
+                        <canvas id="priceChart-{{ soap_safe_name }}" class="price-chart-canvas"></canvas>
+                        <div class="btn-group mt-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ soap_safe_name }}', 3)">3M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ soap_safe_name }}', 6)">6M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ soap_safe_name }}', 9)">9M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ soap_safe_name }}', 12)">1Y</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="card p-3 w-100">
+                        <h6>Predicted Price</h6>
+                        <p class="display-6 text-success mb-1" id="predicted-{{ soap_safe_name }}">
+                            {{ soap_info.predicted_price | round(2) }}
+                        </p>
+                        <small class="text-muted" id="next-month-{{ soap_safe_name }}">
+                            {{ soap_info.next_month }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <script>
+                window['historical_{{ soap_safe_name }}'] = {{ soap_info.historical|tojson }};
+                window['predicted_{{ soap_safe_name }}'] = {{ soap_info.predicted_price|tojson }};
+                window['next_month_{{ soap_safe_name }}'] = "{{ soap_info.next_month }}";
+            </script>
+            {% else %}
+            <div class="alert alert-warning">Soap price data not available</div>
+            {% endif %}
+
+            <!-- Shampoo Product -->
+            {% if shampoo_info and shampoo_info.historical %}
+            {% set shampoo_safe_name = shampoo_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') %}
+            <div class="row mb-4 product-card" id="product-{{ shampoo_safe_name }}">
+                <div class="col-md-8">
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-2">{{ shampoo_info.name }}</h5>
+                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ shampoo_safe_name }}')">
+                                Simulate
+                            </button>
+                        </div>
+                        <canvas id="priceChart-{{ shampoo_safe_name }}" class="price-chart-canvas"></canvas>
+                        <div class="btn-group mt-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ shampoo_safe_name }}', 3)">3M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ shampoo_safe_name }}', 6)">6M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ shampoo_safe_name }}', 9)">9M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ shampoo_safe_name }}', 12)">1Y</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="card p-3 w-100">
+                        <h6>Predicted Price</h6>
+                        <p class="display-6 text-success mb-1" id="predicted-{{ shampoo_safe_name }}">
+                            {{ shampoo_info.predicted_price | round(2) }}
+                        </p>
+                        <small class="text-muted" id="next-month-{{ shampoo_safe_name }}">
+                            {{ shampoo_info.next_month }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <script>
+                window['historical_{{ shampoo_safe_name }}'] = {{ shampoo_info.historical|tojson }};
+                window['predicted_{{ shampoo_safe_name }}'] = {{ shampoo_info.predicted_price|tojson }};
+                window['next_month_{{ shampoo_safe_name }}'] = "{{ shampoo_info.next_month }}";
+            </script>
+            {% else %}
+            <div class="alert alert-warning">Shampoo price data not available</div>
+            {% endif %}
+
+            <!-- Toothpaste Product -->
+            {% if toothpaste_info and toothpaste_info.historical %}
+            {% set toothpaste_safe_name = toothpaste_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') %}
+            <div class="row mb-4 product-card" id="product-{{ toothpaste_safe_name }}">
+                <div class="col-md-8">
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-2">{{ toothpaste_info.name }}</h5>
+                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ toothpaste_safe_name }}')">
+                                Simulate
+                            </button>
+                        </div>
+                        <canvas id="priceChart-{{ toothpaste_safe_name }}" class="price-chart-canvas"></canvas>
+                        <div class="btn-group mt-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ toothpaste_safe_name }}', 3)">3M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ toothpaste_safe_name }}', 6)">6M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ toothpaste_safe_name }}', 9)">9M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ toothpaste_safe_name }}', 12)">1Y</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="card p-3 w-100">
+                        <h6>Predicted Price</h6>
+                        <p class="display-6 text-success mb-1" id="predicted-{{ toothpaste_safe_name }}">
+                            {{ toothpaste_info.predicted_price | round(2) }}
+                        </p>
+                        <small class="text-muted" id="next-month-{{ toothpaste_safe_name }}">
+                            {{ toothpaste_info.next_month }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <script>
+                window['historical_{{ toothpaste_safe_name }}'] = {{ toothpaste_info.historical|tojson }};
+                window['predicted_{{ toothpaste_safe_name }}'] = {{ toothpaste_info.predicted_price|tojson }};
+                window['next_month_{{ toothpaste_safe_name }}'] = "{{ toothpaste_info.next_month }}";
+            </script>
+            {% else %}
+            <div class="alert alert-warning">Toothpaste price data not available</div>
+            {% endif %}
+
+            <!-- Deodorant Product -->
+            {% if deodorant_info and deodorant_info.historical %}
+            {% set deodorant_safe_name = deodorant_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') %}
+            <div class="row mb-4 product-card" id="product-{{ deodorant_safe_name }}">
+                <div class="col-md-8">
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-2">{{ deodorant_info.name }}</h5>
+                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ deodorant_safe_name }}')">
+                                Simulate
+                            </button>
+                        </div>
+                        <canvas id="priceChart-{{ deodorant_safe_name }}" class="price-chart-canvas"></canvas>
+                        <div class="btn-group mt-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ deodorant_safe_name }}', 3)">3M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ deodorant_safe_name }}', 6)">6M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ deodorant_safe_name }}', 9)">9M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ deodorant_safe_name }}', 12)">1Y</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="card p-3 w-100">
+                        <h6>Predicted Price</h6>
+                        <p class="display-6 text-success mb-1" id="predicted-{{ deodorant_safe_name }}">
+                            {{ deodorant_info.predicted_price | round(2) }}
+                        </p>
+                        <small class="text-muted" id="next-month-{{ deodorant_safe_name }}">
+                            {{ deodorant_info.next_month }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <script>
+                window['historical_{{ deodorant_safe_name }}'] = {{ deodorant_info.historical|tojson }};
+                window['predicted_{{ deodorant_safe_name }}'] = {{ deodorant_info.predicted_price|tojson }};
+                window['next_month_{{ deodorant_safe_name }}'] = "{{ deodorant_info.next_month }}";
+            </script>
+            {% else %}
+            <div class="alert alert-warning">Deodorant price data not available</div>
+            {% endif %}
+
+            <!-- Toilet Paper Product -->
+            {% if toiletpaper_info and toiletpaper_info.historical %}
+            {% set toiletpaper_safe_name = toiletpaper_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') %}
+            <div class="row mb-4 product-card" id="product-{{ toiletpaper_safe_name }}">
+                <div class="col-md-8">
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-2">{{ toiletpaper_info.name }}</h5>
+                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ toiletpaper_safe_name }}')">
+                                Simulate
+                            </button>
+                        </div>
+                        <canvas id="priceChart-{{ toiletpaper_safe_name }}" class="price-chart-canvas"></canvas>
+                        <div class="btn-group mt-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ toiletpaper_safe_name }}', 3)">3M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ toiletpaper_safe_name }}', 6)">6M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ toiletpaper_safe_name }}', 9)">9M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ toiletpaper_safe_name }}', 12)">1Y</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="card p-3 w-100">
+                        <h6>Predicted Price</h6>
+                        <p class="display-6 text-success mb-1" id="predicted-{{ toiletpaper_safe_name }}">
+                            {{ toiletpaper_info.predicted_price | round(2) }}
+                        </p>
+                        <small class="text-muted" id="next-month-{{ toiletpaper_safe_name }}">
+                            {{ toiletpaper_info.next_month }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <script>
+                window['historical_{{ toiletpaper_safe_name }}'] = {{ toiletpaper_info.historical|tojson }};
+                window['predicted_{{ toiletpaper_safe_name }}'] = {{ toiletpaper_info.predicted_price|tojson }};
+                window['next_month_{{ toiletpaper_safe_name }}'] = "{{ toiletpaper_info.next_month }}";
+            </script>
+            {% else %}
+            <div class="alert alert-warning">Toilet paper price data not available</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Function to simulate all toiletries products
+        function simulateAllToiletriesProducts() {
+            {% if soap_info and soap_info.historical %}
+            simulateProduct('{{ soap_safe_name }}');
+            {% endif %}
+            {% if shampoo_info and shampoo_info.historical %}
+            setTimeout(() => simulateProduct('{{ shampoo_safe_name }}'), 500);
+            {% endif %}
+            {% if toothpaste_info and toothpaste_info.historical %}
+            setTimeout(() => simulateProduct('{{ toothpaste_safe_name }}'), 1000);
+            {% endif %}
+            {% if deodorant_info and deodorant_info.historical %}
+            setTimeout(() => simulateProduct('{{ deodorant_safe_name }}'), 1500);
+            {% endif %}
+            {% if toiletpaper_info and toiletpaper_info.historical %}
+            setTimeout(() => simulateProduct('{{ toiletpaper_safe_name }}'), 2000);
+            {% endif %}
+        }
+    </script>
+
+    <div class="favorite_wall">
+        <h1 class="wall_txt">Favorites</h1>
+        <p class="fav_txt">See your recently liked Products</p>
+        <button class="ds_seeAll">See All</button>
+    </div>
+
     <div class="profile">
         <h1 class="profile_name">Welcome to Prilythic, User!</h1>
         <h1 class="profile_icon"></h1>
-    </div>
-    <!-- Move category_select outside wall_categories2 to prevent overlap -->
-    <div class="category_select">
-        <h1 class="wall_txt">Toiletries</h1>
-        <p class="p_txt">Select multiple products to choose from </p>
-        <div class="category_choices">
-            <button class="category_btn1" onclick="window.location.href='{{ url_for('cleansing') }}'">Cleansing Products</button>
-            <button class="category_btn2" onclick="window.location.href='{{ url_for('haircare') }}'">Hair Care</button>
-            <button class="category_btn3" onclick="window.location.href='{{ url_for('oralcare') }}'">Oral Care</button>
-            <button class="category_btn4" onclick="window.location.href='{{ url_for('skincare') }}'">Skin Care</button>
-            <button class="category_btn5" onclick="window.location.href='{{ url_for('grooming') }}'">Grooming & Hygiene</button>
-        </div>
     </div>
 </body>
 </html>

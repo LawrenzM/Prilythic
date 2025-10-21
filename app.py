@@ -257,42 +257,33 @@ def categories():
 def settings():
     username = session['username']
     csv_files = [f for f in os.listdir(DATA_FOLDER) if f.endswith('.csv')]
-    return render_template('Settings.html', csv_files=csv_files, username=username)
+    return render_template('Settings.html', csv_files=csv_files)
 
-
-# --- Preferences Route ---
-@app.route('/preferences')
-def preferences():
-    return render_template('preferences.html')  
-
-# --- Helper function for product pages ---
-def render_product_page(product, template_name):
-    if 'username' not in session:
-        return redirect(url_for('login_page'))
-
-    # Use uploaded CSV if available, else default
+def get_product_info(product_column):
+    """Helper function to get product info for a specific column"""
     data_file = os.path.join(DATA_FOLDER, session['loaded_csv']) if session.get('loaded_csv') else data_path
     df = pd.read_csv(data_file)
 
-    clean_product = product.replace("c_", "")
+    if product_column not in df.columns or df[product_column].dropna().shape[0] < 1:
+        return None
 
-    if product not in df.columns or df[product].dropna().shape[0] < 1:
-        return render_template(f'{template_name}.html', info=None)
-
-    data = df[['price_date', product]].dropna()
+    data = df[['price_date', product_column]].dropna()
     data['price_date'] = pd.to_datetime(data['price_date'])
     data = data.sort_values('price_date')
 
-    last_prices = data[product].values
+    # Remove duplicate months, keep last
+    data['year_month'] = data['price_date'].dt.to_period('M')
+    data = data.drop_duplicates(subset='year_month', keep='last').drop(columns=['year_month'])
+
+    last_prices = data[product_column].values
     last_date = data['price_date'].max()
     next_date = last_date + pd.DateOffset(months=1)
 
-    # --- Lag features ---
+    # --- Prediction logic (same as your existing code) ---
     lags = 12
     lag_values = [last_prices[-i] if i <= len(last_prices) else 0 for i in range(1, lags + 1)]
     lag_dict = {f'price_lag{i+1}': [lag_values[i]] for i in range(lags)}
 
-    # --- 6-month rolling mean ---
     price_roll6 = np.mean(last_prices[-6:]) if len(last_prices) >= 1 else 0
 
     input_data = {
@@ -303,7 +294,7 @@ def render_product_page(product, template_name):
         'price_roll6': [price_roll6]
     }
 
-    # --- One-hot encoding ---
+    clean_product = product_column.replace("c_", "")
     for col in scaler.feature_names_in_:
         if col.startswith('product_'):
             input_data[col] = [1 if col == f'product_{clean_product}' else 0]
@@ -316,81 +307,109 @@ def render_product_page(product, template_name):
     hist_data = data.tail(12).copy()
     hist_data['price_date'] = hist_data['price_date'].dt.strftime('%Y-%m-%d')
 
-    info = {
+    return {
         "name": clean_product.replace("_", " ").title(),
         "historical": hist_data.to_dict(orient='records'),
         "predicted_price": float(predicted_price),
         "next_month": f"{next_date.year}-{next_date.month:02d}-01"
     }
 
-    return render_template(f'{template_name}.html', info=info)
+# --- Preferences Route ---
+@app.route('/preferences')
+def preferences():
+    return render_template('preferences.html')  
+
 
 # --- Meat Category Page ---
 @app.route('/meat')
 def meat():
-    return render_template('meat.html')
+    if 'username' not in session:
+        return redirect(url_for('login_page'))
 
+    # Get data for all meat products
+    beef_info = get_product_info('c_meat_beef_chops')
+    chicken_info = get_product_info('c_meat_chicken_whole') 
+    pork_info = get_product_info('c_meat_pork')
 
-# --- Meat Product Pages ---
-@app.route('/chicken')
-def chicken():
-    return render_product_page('c_meat_chicken_whole', 'chicken')
-
-@app.route('/beef')
-def beef():
-    return render_product_page('c_meat_beef_chops', 'beef')
-
-@app.route('/pork')
-def pork():
-    return render_product_page('c_meat_pork', 'pork')
-
+    return render_template('meat.html', 
+                         beef_info=beef_info,
+                         chicken_info=chicken_info,
+                         pork_info=pork_info)
 
 # --- Vegetable Category Page ---
 @app.route('/vegetable')
 def vegetable():
-    return render_template('vegetable.html')
+    if 'username' not in session:
+        return redirect(url_for('login_page'))
 
+    # Get data for all vegetable products
+    beans_info = get_product_info('c_beans')
+    carrots_info = get_product_info('c_carrots')
+    cabbage_info = get_product_info('c_cabbage')
+    tomatoes_info = get_product_info('c_tomatoes')
+    potatoes_info = get_product_info('c_potatoes')
 
-# --- Individual Vegetable Product Pages ---
-@app.route('/beans')
-def beans():
-    return render_product_page('c_beans', 'beans')
-
-@app.route('/carrots')
-def carrots():
-    return render_product_page('c_carrots', 'carrot')
-
-@app.route('/cabbage')
-def cabbage():
-    return render_product_page('c_cabbage', 'cabbage')
-
-@app.route('/tomatoes')
-def tomatoes():
-    return render_product_page('c_tomatoes', 'tomatoes')
-
-@app.route('/potatoes')
-def potatoes():
-    return render_product_page('c_potatoes', 'potato')
+    return render_template('vegetable.html', 
+                         beans_info=beans_info,
+                         carrots_info=carrots_info,
+                         cabbage_info=cabbage_info,
+                         tomatoes_info=tomatoes_info,
+                         potatoes_info=potatoes_info)
 
 
 # --- Cooking Essentials Category Page ---
 @app.route('/cook')
 def cook():
-    return render_template('cook.html')
+    if 'username' not in session:
+        return redirect(url_for('login_page'))
 
+    # Get data for all cooking essential products
+    onions_info = get_product_info('c_onions')
+    rice_info = get_product_info('c_rice')
+    eggs_info = get_product_info('c_eggs')
 
-# --- Individual Cooking Essentials Pages ---
-@app.route('/onions')
-def onions():
-    return render_product_page('c_onions', 'onions')
+    return render_template('cook.html', 
+                         onions_info=onions_info,
+                         rice_info=rice_info,
+                         eggs_info=eggs_info)
 
-@app.route('/rice')
-def rice():
-    return render_product_page('c_rice', 'rice')
+# --- Toiletries Category Page ---
+@app.route('/toiletries')
+def toiletries():
+    if 'username' not in session:
+        return redirect(url_for('login_page'))
 
-@app.route('/eggs')
-def eggs():
-    return render_product_page('c_eggs', 'eggs')
+    # Get data for all toiletries products
+    soap_info = get_product_info('c_soap')
+    shampoo_info = get_product_info('c_shampoo')
+    toothpaste_info = get_product_info('c_toothpaste')
+    deodorant_info = get_product_info('c_deodorant')
+    toiletpaper_info = get_product_info('c_toilet_paper')
+
+    return render_template('toiletries.html', 
+                         soap_info=soap_info,
+                         shampoo_info=shampoo_info,
+                         toothpaste_info=toothpaste_info,
+                         deodorant_info=deodorant_info,
+                         toiletpaper_info=toiletpaper_info)
+
+# --- Household Category Page ---
+@app.route('/household')
+def household():
+    if 'username' not in session:
+        return redirect(url_for('login_page'))
+
+    # Get data for all household products
+    fabricsoftener_info = get_product_info('c_fabric_softener')
+    detergent_info = get_product_info('c_detergent')
+    dishsoap_info = get_product_info('c_dish_soap')
+    bleach_info = get_product_info('c_bleach')
+
+    return render_template('household.html', 
+                         fabricsoftener_info=fabricsoftener_info,
+                         detergent_info=detergent_info,
+                         dishsoap_info=dishsoap_info,
+                         bleach_info=bleach_info)
 
 
 # --- Logout Route ---

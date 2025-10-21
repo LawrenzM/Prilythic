@@ -353,20 +353,27 @@ function setupDynamicSimulationDate() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    if (!window.products || window.products.length === 0) {
-        console.warn("No products found — check Flask injection or session data.");
-        return;
-    }
-
-    console.log("Loaded products from Flask:", window.products);
-
     // Dynamic simulation date setup
     setupDynamicSimulationDate();
 
-    window.products.forEach(function(id) {
+    // Method 1: Use window.products if available
+    if (window.products && window.products.length > 0) {
+        window.products.forEach(initializeProduct);
+    } 
+    // Method 2: Auto-detect from product cards
+    else {
+        const productCards = document.querySelectorAll('[id^="product-"]');
+        if (productCards.length > 0) {
+            productCards.forEach(card => {
+                const id = card.id.replace('product-', '');
+                initializeProduct(id);
+            });
+        }
+    }
+
+    function initializeProduct(id) {
         let historical = window['historical_' + id] || [];
         
-        // Use dynamic timeline initialization
         historical = initializeDynamicTimeline(historical, id);
         window['historical_' + id] = historical;
         
@@ -375,9 +382,6 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
         
-        console.log(`Initial dates for ${id}:`, historical.map(h => h.price_date || h.date));
-        
-        // Verify we can find price field
         const priceField = detectPriceField(historical[0], id);
         if (!priceField) {
             console.error(`Cannot display ${id}: No price field detected`);
@@ -385,7 +389,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         
         drawChart(id, historical, 12);
-    });
+    }
 });
 
 window.updateChart = function(id, months) {
@@ -486,7 +490,7 @@ function drawChart(id, historical, months) {
     });
 }
 
-// Error display for charts
+// Error display for charts 
 function showChartError(canvasElement, message) {
     canvasElement.style.display = 'none';
     const errorDiv = document.createElement('div');

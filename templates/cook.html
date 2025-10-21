@@ -5,34 +5,211 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{url_for('static', filename='CSS/example.css')}}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Cooking Essentials Page</title>
-    <!-- Dark mode support -->
     <script src="{{ url_for('static', filename='JS/dark_mode.js') }}"></script>
+    <script src="{{ url_for('static', filename='JS/dash.js') }}"></script>
+    
+    <!-- Initialize products array for dash.js compatibility -->
+    <script>
+        window.products = [
+            {% if onions_info and onions_info.historical %}
+            "{{ onions_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') }}"{% if rice_info and rice_info.historical or eggs_info and eggs_info.historical %},{% endif %}
+            {% endif %}
+            {% if rice_info and rice_info.historical %}
+            "{{ rice_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') }}"{% if eggs_info and eggs_info.historical %},{% endif %}
+            {% endif %}
+            {% if eggs_info and eggs_info.historical %}
+            "{{ eggs_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') }}"
+            {% endif %}
+        ];
+        
+        console.log("Cooking Essentials products:", window.products);
+    </script>
 </head>
 <body>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    <script src="{{ url_for('static', filename='JS/dash.js') }}"></script>
+    
     <div class="container">
         <img src="{{url_for('static', filename='IMAGES/OFFICIAL_PRILYTHIC_LOGO.png')}}" alt="Prilythic-logo" class="ds_logo">
         <br>
         <button onclick="window.location.href='{{url_for('dashboard')}}'" class="DSbutton1">Dashboard</button>
         <button onclick="window.location.href='{{url_for('categories')}}'" class="DSbutton2">Categories</button>
         <button onclick="window.location.href='{{url_for('settings')}}'" class="DSbutton3">Settings</button>
-        <button onclick="window.location.href='{{url_for('logout')}}'" class="DSbutton4">Logout</button>
+        <button onclick="confirmLogout()" class="DSbutton4" data-logout-url="{{ url_for('logout') }}">Logout</button>
     </div>
+
     <div class="search">
         <input type="search_box" class="search" placeholder="Search...">
         <img src="{{url_for('static', filename='IMAGES/Search_icon.png')}}" alt="search icon" class="search-icn">
-        <h1 class="dstxt">Category</h1>
+        <h1 class="dstxt">Cooking Essentials Category</h1>
     </div>
+
+    <div class="simulation-controls">
+        <button class="simulate-all-btn" onclick="simulateAllCookingProducts()">Simulate All Cooking Products</button>
+    </div>
+
+    <div class="wall">        
+        <!-- Debug info (hidden) -->
+        <div style="display: none;">
+            Onions Info: {{ onions_info|tojson }}
+            Rice Info: {{ rice_info|tojson }}
+            Eggs Info: {{ eggs_info|tojson }}
+        </div>
+        
+        <div class="scrollable-price-charts">
+            <!-- Onions Product -->
+            {% if onions_info and onions_info.historical %}
+            {% set onions_safe_name = onions_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') %}
+            <div class="row mb-4 product-card" id="product-{{ onions_safe_name }}">
+                <div class="col-md-8">
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-2">{{ onions_info.name }}</h5>
+                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ onions_safe_name }}')">
+                                Simulate
+                            </button>
+                        </div>
+                        <canvas id="priceChart-{{ onions_safe_name }}" class="price-chart-canvas"></canvas>
+                        <div class="btn-group mt-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ onions_safe_name }}', 3)">3M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ onions_safe_name }}', 6)">6M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ onions_safe_name }}', 9)">9M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ onions_safe_name }}', 12)">1Y</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="card p-3 w-100">
+                        <h6>Predicted Price</h6>
+                        <p class="display-6 text-success mb-1" id="predicted-{{ onions_safe_name }}">
+                            {{ onions_info.predicted_price | round(2) }}
+                        </p>
+                        <small class="text-muted" id="next-month-{{ onions_safe_name }}">
+                            {{ onions_info.next_month }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <script>
+                window['historical_{{ onions_safe_name }}'] = {{ onions_info.historical|tojson }};
+                window['predicted_{{ onions_safe_name }}'] = {{ onions_info.predicted_price|tojson }};
+                window['next_month_{{ onions_safe_name }}'] = "{{ onions_info.next_month }}";
+            </script>
+            {% else %}
+            <div class="alert alert-warning">Onions price data not available</div>
+            {% endif %}
+
+            <!-- Rice Product -->
+            {% if rice_info and rice_info.historical %}
+            {% set rice_safe_name = rice_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') %}
+            <div class="row mb-4 product-card" id="product-{{ rice_safe_name }}">
+                <div class="col-md-8">
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-2">{{ rice_info.name }}</h5>
+                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ rice_safe_name }}')">
+                                Simulate
+                            </button>
+                        </div>
+                        <canvas id="priceChart-{{ rice_safe_name }}" class="price-chart-canvas"></canvas>
+                        <div class="btn-group mt-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ rice_safe_name }}', 3)">3M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ rice_safe_name }}', 6)">6M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ rice_safe_name }}', 9)">9M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ rice_safe_name }}', 12)">1Y</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="card p-3 w-100">
+                        <h6>Predicted Price</h6>
+                        <p class="display-6 text-success mb-1" id="predicted-{{ rice_safe_name }}">
+                            {{ rice_info.predicted_price | round(2) }}
+                        </p>
+                        <small class="text-muted" id="next-month-{{ rice_safe_name }}">
+                            {{ rice_info.next_month }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <script>
+                window['historical_{{ rice_safe_name }}'] = {{ rice_info.historical|tojson }};
+                window['predicted_{{ rice_safe_name }}'] = {{ rice_info.predicted_price|tojson }};
+                window['next_month_{{ rice_safe_name }}'] = "{{ rice_info.next_month }}";
+            </script>
+            {% else %}
+            <div class="alert alert-warning">Rice price data not available</div>
+            {% endif %}
+
+            <!-- Eggs Product -->
+            {% if eggs_info and eggs_info.historical %}
+            {% set eggs_safe_name = eggs_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') %}
+            <div class="row mb-4 product-card" id="product-{{ eggs_safe_name }}">
+                <div class="col-md-8">
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-2">{{ eggs_info.name }}</h5>
+                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ eggs_safe_name }}')">
+                                Simulate
+                            </button>
+                        </div>
+                        <canvas id="priceChart-{{ eggs_safe_name }}" class="price-chart-canvas"></canvas>
+                        <div class="btn-group mt-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ eggs_safe_name }}', 3)">3M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ eggs_safe_name }}', 6)">6M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ eggs_safe_name }}', 9)">9M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ eggs_safe_name }}', 12)">1Y</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="card p-3 w-100">
+                        <h6>Predicted Price</h6>
+                        <p class="display-6 text-success mb-1" id="predicted-{{ eggs_safe_name }}">
+                            {{ eggs_info.predicted_price | round(2) }}
+                        </p>
+                        <small class="text-muted" id="next-month-{{ eggs_safe_name }}">
+                            {{ eggs_info.next_month }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <script>
+                window['historical_{{ eggs_safe_name }}'] = {{ eggs_info.historical|tojson }};
+                window['predicted_{{ eggs_safe_name }}'] = {{ eggs_info.predicted_price|tojson }};
+                window['next_month_{{ eggs_safe_name }}'] = "{{ eggs_info.next_month }}";
+            </script>
+            {% else %}
+            <div class="alert alert-warning">Eggs price data not available</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Function to simulate all cooking products
+        function simulateAllCookingProducts() {
+            {% if onions_info and onions_info.historical %}
+            simulateProduct('{{ onions_safe_name }}');
+            {% endif %}
+            {% if rice_info and rice_info.historical %}
+            setTimeout(() => simulateProduct('{{ rice_safe_name }}'), 500);
+            {% endif %}
+            {% if eggs_info and eggs_info.historical %}
+            setTimeout(() => simulateProduct('{{ eggs_safe_name }}'), 1000);
+            {% endif %}
+        }
+    </script>
+
+    <div class="favorite_wall">
+        <h1 class="wall_txt">Favorites</h1>
+        <p class="fav_txt">See your recently liked Products</p>
+        <button class="ds_seeAll">See All</button>
+    </div>
+
     <div class="profile">
         <h1 class="profile_name">Welcome to Prilythic, User!</h1>
         <h1 class="profile_icon"></h1>
     </div>
-    <div class="category_select">
-         <h1 class="wall_txt">Cooking Essentials</h1>
-        <p class="p_txt">Select multiple products to choose from </p>
-        <div class="category_choices">
-            
-    </body>
+</body>
 </html>

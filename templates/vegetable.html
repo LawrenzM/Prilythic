@@ -5,36 +5,309 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{url_for('static', filename='CSS/example.css')}}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Vegetables Page</title>
-     <script src="{{ url_for('static', filename='JS/dark_mode.js') }}"></script>
+    <script src="{{ url_for('static', filename='JS/dark_mode.js') }}"></script>
+    <script src="{{ url_for('static', filename='JS/dash.js') }}"></script>
+    
+    <!-- Initialize products array for dash.js compatibility -->
+    <script>
+        window.products = [
+            {% if beans_info and beans_info.historical %}
+            "{{ beans_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') }}"{% if carrots_info and carrots_info.historical or cabbage_info and cabbage_info.historical or tomatoes_info and tomatoes_info.historical or potatoes_info and potatoes_info.historical %},{% endif %}
+            {% endif %}
+            {% if carrots_info and carrots_info.historical %}
+            "{{ carrots_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') }}"{% if cabbage_info and cabbage_info.historical or tomatoes_info and tomatoes_info.historical or potatoes_info and potatoes_info.historical %},{% endif %}
+            {% endif %}
+            {% if cabbage_info and cabbage_info.historical %}
+            "{{ cabbage_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') }}"{% if tomatoes_info and tomatoes_info.historical or potatoes_info and potatoes_info.historical %},{% endif %}
+            {% endif %}
+            {% if tomatoes_info and tomatoes_info.historical %}
+            "{{ tomatoes_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') }}"{% if potatoes_info and potatoes_info.historical %},{% endif %}
+            {% endif %}
+            {% if potatoes_info and potatoes_info.historical %}
+            "{{ potatoes_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') }}"
+            {% endif %}
+        ];
+        
+        console.log("Vegetable products:", window.products);
+    </script>
 </head>
 <body>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    <script src="{{ url_for('static', filename='JS/dash.js') }}"></script>
+    
     <div class="container">
         <img src="{{url_for('static', filename='IMAGES/OFFICIAL_PRILYTHIC_LOGO.png')}}" alt="Prilythic-logo" class="ds_logo">
         <br>
         <button onclick="window.location.href='{{url_for('dashboard')}}'" class="DSbutton1">Dashboard</button>
         <button onclick="window.location.href='{{url_for('categories')}}'" class="DSbutton2">Categories</button>
         <button onclick="window.location.href='{{url_for('settings')}}'" class="DSbutton3">Settings</button>
-        <button onclick="window.location.href='{{url_for('logout')}}'" class="DSbutton4">Logout</button>
+        <button onclick="confirmLogout()" class="DSbutton4" data-logout-url="{{ url_for('logout') }}">Logout</button>
     </div>
+
     <div class="search">
         <input type="search_box" class="search" placeholder="Search...">
         <img src="{{url_for('static', filename='IMAGES/Search_icon.png')}}" alt="search icon" class="search-icn">
-        <h1 class="dstxt">Category</h1>
+        <h1 class="dstxt">Vegetable Category</h1>
     </div>
+
+    <div class="simulation-controls">
+        <button class="simulate-all-btn" onclick="simulateAllVegetableProducts()">Simulate All Vegetable Products</button>
+    </div>
+
+    <div class="wall">        
+        <!-- Debug info (hidden) -->
+        <div style="display: none;">
+            Beans Info: {{ beans_info|tojson }}
+            Carrots Info: {{ carrots_info|tojson }}
+            Cabbage Info: {{ cabbage_info|tojson }}
+            Tomatoes Info: {{ tomatoes_info|tojson }}
+            Potatoes Info: {{ potatoes_info|tojson }}
+        </div>
+        
+        <div class="scrollable-price-charts">
+            <!-- Beans Product -->
+            {% if beans_info and beans_info.historical %}
+            {% set beans_safe_name = beans_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') %}
+            <div class="row mb-4 product-card" id="product-{{ beans_safe_name }}">
+                <div class="col-md-8">
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-2">{{ beans_info.name }}</h5>
+                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ beans_safe_name }}')">
+                                Simulate
+                            </button>
+                        </div>
+                        <canvas id="priceChart-{{ beans_safe_name }}" class="price-chart-canvas"></canvas>
+                        <div class="btn-group mt-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ beans_safe_name }}', 3)">3M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ beans_safe_name }}', 6)">6M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ beans_safe_name }}', 9)">9M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ beans_safe_name }}', 12)">1Y</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="card p-3 w-100">
+                        <h6>Predicted Price</h6>
+                        <p class="display-6 text-success mb-1" id="predicted-{{ beans_safe_name }}">
+                            {{ beans_info.predicted_price | round(2) }}
+                        </p>
+                        <small class="text-muted" id="next-month-{{ beans_safe_name }}">
+                            {{ beans_info.next_month }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <script>
+                window['historical_{{ beans_safe_name }}'] = {{ beans_info.historical|tojson }};
+                window['predicted_{{ beans_safe_name }}'] = {{ beans_info.predicted_price|tojson }};
+                window['next_month_{{ beans_safe_name }}'] = "{{ beans_info.next_month }}";
+            </script>
+            {% else %}
+            <div class="alert alert-warning">Beans price data not available</div>
+            {% endif %}
+
+            <!-- Carrots Product -->
+            {% if carrots_info and carrots_info.historical %}
+            {% set carrots_safe_name = carrots_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') %}
+            <div class="row mb-4 product-card" id="product-{{ carrots_safe_name }}">
+                <div class="col-md-8">
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-2">{{ carrots_info.name }}</h5>
+                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ carrots_safe_name }}')">
+                                Simulate
+                            </button>
+                        </div>
+                        <canvas id="priceChart-{{ carrots_safe_name }}" class="price-chart-canvas"></canvas>
+                        <div class="btn-group mt-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ carrots_safe_name }}', 3)">3M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ carrots_safe_name }}', 6)">6M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ carrots_safe_name }}', 9)">9M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ carrots_safe_name }}', 12)">1Y</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="card p-3 w-100">
+                        <h6>Predicted Price</h6>
+                        <p class="display-6 text-success mb-1" id="predicted-{{ carrots_safe_name }}">
+                            {{ carrots_info.predicted_price | round(2) }}
+                        </p>
+                        <small class="text-muted" id="next-month-{{ carrots_safe_name }}">
+                            {{ carrots_info.next_month }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <script>
+                window['historical_{{ carrots_safe_name }}'] = {{ carrots_info.historical|tojson }};
+                window['predicted_{{ carrots_safe_name }}'] = {{ carrots_info.predicted_price|tojson }};
+                window['next_month_{{ carrots_safe_name }}'] = "{{ carrots_info.next_month }}";
+            </script>
+            {% else %}
+            <div class="alert alert-warning">Carrots price data not available</div>
+            {% endif %}
+
+            <!-- Cabbage Product -->
+            {% if cabbage_info and cabbage_info.historical %}
+            {% set cabbage_safe_name = cabbage_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') %}
+            <div class="row mb-4 product-card" id="product-{{ cabbage_safe_name }}">
+                <div class="col-md-8">
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-2">{{ cabbage_info.name }}</h5>
+                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ cabbage_safe_name }}')">
+                                Simulate
+                            </button>
+                        </div>
+                        <canvas id="priceChart-{{ cabbage_safe_name }}" class="price-chart-canvas"></canvas>
+                        <div class="btn-group mt-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ cabbage_safe_name }}', 3)">3M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ cabbage_safe_name }}', 6)">6M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ cabbage_safe_name }}', 9)">9M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ cabbage_safe_name }}', 12)">1Y</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="card p-3 w-100">
+                        <h6>Predicted Price</h6>
+                        <p class="display-6 text-success mb-1" id="predicted-{{ cabbage_safe_name }}">
+                            {{ cabbage_info.predicted_price | round(2) }}
+                        </p>
+                        <small class="text-muted" id="next-month-{{ cabbage_safe_name }}">
+                            {{ cabbage_info.next_month }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <script>
+                window['historical_{{ cabbage_safe_name }}'] = {{ cabbage_info.historical|tojson }};
+                window['predicted_{{ cabbage_safe_name }}'] = {{ cabbage_info.predicted_price|tojson }};
+                window['next_month_{{ cabbage_safe_name }}'] = "{{ cabbage_info.next_month }}";
+            </script>
+            {% else %}
+            <div class="alert alert-warning">Cabbage price data not available</div>
+            {% endif %}
+
+            <!-- Tomatoes Product -->
+            {% if tomatoes_info and tomatoes_info.historical %}
+            {% set tomatoes_safe_name = tomatoes_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') %}
+            <div class="row mb-4 product-card" id="product-{{ tomatoes_safe_name }}">
+                <div class="col-md-8">
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-2">{{ tomatoes_info.name }}</h5>
+                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ tomatoes_safe_name }}')">
+                                Simulate
+                            </button>
+                        </div>
+                        <canvas id="priceChart-{{ tomatoes_safe_name }}" class="price-chart-canvas"></canvas>
+                        <div class="btn-group mt-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ tomatoes_safe_name }}', 3)">3M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ tomatoes_safe_name }}', 6)">6M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ tomatoes_safe_name }}', 9)">9M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ tomatoes_safe_name }}', 12)">1Y</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="card p-3 w-100">
+                        <h6>Predicted Price</h6>
+                        <p class="display-6 text-success mb-1" id="predicted-{{ tomatoes_safe_name }}">
+                            {{ tomatoes_info.predicted_price | round(2) }}
+                        </p>
+                        <small class="text-muted" id="next-month-{{ tomatoes_safe_name }}">
+                            {{ tomatoes_info.next_month }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <script>
+                window['historical_{{ tomatoes_safe_name }}'] = {{ tomatoes_info.historical|tojson }};
+                window['predicted_{{ tomatoes_safe_name }}'] = {{ tomatoes_info.predicted_price|tojson }};
+                window['next_month_{{ tomatoes_safe_name }}'] = "{{ tomatoes_info.next_month }}";
+            </script>
+            {% else %}
+            <div class="alert alert-warning">Tomatoes price data not available</div>
+            {% endif %}
+
+            <!-- Potatoes Product -->
+            {% if potatoes_info and potatoes_info.historical %}
+            {% set potatoes_safe_name = potatoes_info.name|replace(' ', '_')|replace('/', '-')|replace('.', '')|replace(',', '') %}
+            <div class="row mb-4 product-card" id="product-{{ potatoes_safe_name }}">
+                <div class="col-md-8">
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-2">{{ potatoes_info.name }}</h5>
+                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ potatoes_safe_name }}')">
+                                Simulate
+                            </button>
+                        </div>
+                        <canvas id="priceChart-{{ potatoes_safe_name }}" class="price-chart-canvas"></canvas>
+                        <div class="btn-group mt-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ potatoes_safe_name }}', 3)">3M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ potatoes_safe_name }}', 6)">6M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ potatoes_safe_name }}', 9)">9M</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ potatoes_safe_name }}', 12)">1Y</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="card p-3 w-100">
+                        <h6>Predicted Price</h6>
+                        <p class="display-6 text-success mb-1" id="predicted-{{ potatoes_safe_name }}">
+                            {{ potatoes_info.predicted_price | round(2) }}
+                        </p>
+                        <small class="text-muted" id="next-month-{{ potatoes_safe_name }}">
+                            {{ potatoes_info.next_month }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <script>
+                window['historical_{{ potatoes_safe_name }}'] = {{ potatoes_info.historical|tojson }};
+                window['predicted_{{ potatoes_safe_name }}'] = {{ potatoes_info.predicted_price|tojson }};
+                window['next_month_{{ potatoes_safe_name }}'] = "{{ potatoes_info.next_month }}";
+            </script>
+            {% else %}
+            <div class="alert alert-warning">Potatoes price data not available</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Function to simulate all vegetable products
+        function simulateAllVegetableProducts() {
+            {% if beans_info and beans_info.historical %}
+            simulateProduct('{{ beans_safe_name }}');
+            {% endif %}
+            {% if carrots_info and carrots_info.historical %}
+            setTimeout(() => simulateProduct('{{ carrots_safe_name }}'), 500);
+            {% endif %}
+            {% if cabbage_info and cabbage_info.historical %}
+            setTimeout(() => simulateProduct('{{ cabbage_safe_name }}'), 1000);
+            {% endif %}
+            {% if tomatoes_info and tomatoes_info.historical %}
+            setTimeout(() => simulateProduct('{{ tomatoes_safe_name }}'), 1500);
+            {% endif %}
+            {% if potatoes_info and potatoes_info.historical %}
+            setTimeout(() => simulateProduct('{{ potatoes_safe_name }}'), 2000);
+            {% endif %}
+        }
+    </script>
+
+    <div class="favorite_wall">
+        <h1 class="wall_txt">Favorites</h1>
+        <p class="fav_txt">See your recently liked Products</p>
+        <button class="ds_seeAll">See All</button>
+    </div>
+
     <div class="profile">
         <h1 class="profile_name">Welcome to Prilythic, User!</h1>
         <h1 class="profile_icon"></h1>
-    </div>
-
-    <div class="category_select">
-         <h1 class="wall_txt">Vegetable</h1>
-        <p class="p_txt">Select multiple products to choose from </p>
-
-        <div class="category_choices">
-
     </div>
 </body>
 </html>
