@@ -48,7 +48,7 @@ h1{
     color: white;
     font-size: 50px;
 }
-.DSbutton1, .DSbutton2, .DSbutton3, .DSbutton4{
+.DSbutton1, .DSbutton2, .DSbutton3, .DSbutton4, .DSbutton5{
     position:fixed;
     width:400px;
     height:100px;
@@ -67,6 +67,7 @@ h1{
 .DSbutton2 {top:550px;}
 .DSbutton3 {top: 750px;}
 .DSbutton4 {top:950px;}
+.DSbutton5 {top:1150px;}
 
 button:hover{
     background-color: #A29EE5;
@@ -846,7 +847,7 @@ body.dark-mode .simulate-btn:hover {
 }
 
 body.dark-mode .simulate-all-btn {
-    background-color: #17a2b8;
+    background-color: #645ED4;
     color: white;
 }
 
