@@ -563,7 +563,7 @@ def delete_account():
     except Exception as e:
         flash("An error occurred while deleting your account.", "error")
         print("Error deleting account:", e)
-        return redirect(url_for('settings'))
+        return redirect(url_for('dashboard'))
     
 # --- Run the app ---
 if __name__ == '__main__':
