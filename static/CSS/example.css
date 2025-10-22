@@ -113,8 +113,8 @@ input[type="search_box"]{
     padding:20px !important;
     position:absolute !important;
     top:300px !important;
-    left:725px !important;
-    width:1850px !important;
+    left:650px !important;
+    width:1650px !important;
     height: 1045px !important;
     border-radius: 10px !important;
 }
@@ -884,7 +884,7 @@ body.dark-mode .simulate-all-btn:hover {
     color:white;
     border-radius:50px;
     position:absolute;
-    left:2200px;
+    left:2100px;
     top:210px;
     width:200px;
     height:70px;
