@@ -950,3 +950,12 @@ body.dark-mode .simulate-all-btn:hover {
     top:1000px;
 }
 
+#drop-area{
+    background-color: black;
+    position:absolute;
+    top:100px;
+    width:500px;
+    height:600px;
+    border-radius: 20px;
+
+}
