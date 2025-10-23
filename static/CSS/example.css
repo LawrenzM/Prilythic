@@ -1,15 +1,15 @@
 body{
-  background-color: #F0EFFB ;
+  background-color: #ebf0ff ;
   display:flex;
 }
 
 .container{
     background: linear-gradient(#2d284b) !important;
     position:fixed !important;
-    height:1300px !important;
+    height:1450px !important;
     width:500px !important;
-    top:80px !important;
-    left:50px !important;
+    top:5px !important;
+    left:25px !important;
     border-radius: 70px !important;
 }
 
@@ -35,8 +35,11 @@ body{
 .dstxt{
     position:absolute;
     color: #2d284b;
-    top:120px;
-    left:220px;
+    top:130px;
+    left:120px;
+    font-size:40px;
+    font-family: sans-serif;
+    font-weight: bold;
 }
 body.dark-mode .dstxt {
     color: #ffffff !important;
@@ -57,7 +60,7 @@ h1{
     border: 0px;
     background-color: #2d284b;
     color:white;
-    left: 100px;
+    left: 75px;
     cursor: pointer;
     transition: 1s;
     font-size:30px;
@@ -94,19 +97,20 @@ button:after{
 
 input[type="search_box"]{
     position:absolute;
-    left:220px;
-    top:10px;
+    left:950px;
+    top:180px;
     height:80px;
-    width:400px;
-    border-radius: 30px;
+    width:600px;
+    border-radius: 50px;
+    border: 0px;
 }
 
 .search-icn{
     position:absolute;
     height:50px;
     width:50px;
-    left:550px;
-    top:25px;
+    left:1475px;
+    top:195px;
 
 }
 
@@ -119,6 +123,8 @@ input[type="search_box"]{
     width:1650px !important;
     height: 1045px !important;
     border-radius: 10px !important;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 8px 20px rgba(0,0,0,0.1);
+
 }
 
 .wall2{
@@ -180,6 +186,8 @@ input[type="search_box"]{
     width:600px;
     height: 1045px;
     border-radius: 25px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 8px 20px rgba(0,0,0,0.1);
+
 }
 
 .fav_txt{
@@ -228,10 +236,12 @@ input[type="search_box"]{
 
 .profile_name{
     position: absolute;
-    font-size: 40px;
+    font-size: 30px;
     color: #2d284b;
-    left:720px;
+    left:620px;
     top:210px;
+    font-family: sans-serif;
+    
 }
 
 .upload_but{
@@ -315,12 +325,14 @@ input[type="search_box"]{
     transition: 1s;
 }
 .pdsgn{
-    color: #A29EE5;
+    color: #2d284b;
     position: absolute;
     font-size: 35px;
-    top:120px;
-    left: 100px;
-    font-weight: bold;
+    top:115px;
+    left: 80px;
+    font-weight:bold;
+    font-size: 25px;
+    font-family: sans-serif;
 }
 
 .window{
@@ -895,8 +907,9 @@ body.dark-mode .simulate-all-btn:hover {
 
 .favorite_txt{
     position:absolute;
-    color:#645ED4;
-    left:100px;
+    color:#2d284b;
+    left:80px;
+    font-size: 40px;
 }
 
 .search_bar{
@@ -909,32 +922,31 @@ body.dark-mode .simulate-all-btn:hover {
 
 .img1{
     position:absolute;
-    left:85px;
-    top:325px;
+    left:105px;
+    top:400px;
 }
 
 .img2{
     position:absolute;
-    left:85px;
-    top:475px;
+    left:105px;
+    top:545px;
 }
 
 .img3{
     position:absolute;
-    left:85px;
-    top:625px;
+    left:105px;
+    top:700px;
 }
 
 .img4{
     position:absolute;
-    left:85px;
-    top:775px;
+    left:125px;
+    top:850px;
 }
 
 .img5{
     position:absolute;
     left:85px;
-    top:925px;
+    top:1000px;
 }
 
-button:
