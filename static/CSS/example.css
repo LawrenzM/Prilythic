@@ -6,11 +6,11 @@ body{
 .container{
     background: linear-gradient(#2d284b) !important;
     position:fixed !important;
-    height:1450px !important;
+    height:1460px !important;
     width:500px !important;
-    top:5px !important;
-    left:25px !important;
-    border-radius: 70px !important;
+    top:0px !important;
+    left:0px !important;
+ 
 }
 
 .ds_logo{
@@ -60,7 +60,7 @@ h1{
     border: 0px;
     background-color: #2d284b;
     color:white;
-    left: 75px;
+    left: 55px;
     cursor: pointer;
     transition: 1s;
     font-size:30px;
@@ -328,9 +328,8 @@ input[type="search_box"]{
     color: #2d284b;
     position: absolute;
     font-size: 35px;
-    top:115px;
+    top:100px;
     left: 80px;
-    font-weight:bold;
     font-size: 25px;
     font-family: sans-serif;
 }
@@ -910,6 +909,7 @@ body.dark-mode .simulate-all-btn:hover {
     color:#2d284b;
     left:80px;
     font-size: 40px;
+    font-family: sans-serif;
 }
 
 .search_bar{

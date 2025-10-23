@@ -17,8 +17,15 @@
         <br>
         <button onclick="window.location.href='{{url_for('dashboard')}}'" class="DSbutton1">Dashboard</button>
         <button onclick="window.location.href='{{url_for('categories')}}'" class="DSbutton2">Categories</button>
-        <button onclick="window.location.href='{{url_for('settings')}}'" class="DSbutton3">Settings</button>
+        <button onclick="window.location.href='{{url_for('settings')}}'" class="DSbutton3">Dark Mode</button>
         <button onclick="confirmLogout()" class="DSbutton4" data-logout-url="{{ url_for('logout') }}">Logout</button>
+        <form action="{{ url_for('delete_account') }}" method="POST" onsubmit="return confirmDelete()" style="display:inline;">
+            <button type="submit" class="DSbutton5">Delete Account</button>
+        <img src="{{url_for('static', filename='IMAGES/Dashboard (2).png')}}" alt="dashboard" class="img1">
+        <img src="{{url_for('static', filename='IMAGES/Category.png')}}" alt="category" class="img2">
+        <img src="{{url_for('static', filename='IMAGES/DarkMode.png')}}" alt="darkmode" class="img3">
+        <img src="{{url_for('static', filename='IMAGES/Logout.png')}}" alt="logout" class="img4">
+        <img src="{{url_for('static', filename='IMAGES/Delete.png')}}" alt="delete" class="img5">
     </div>
         <div class="profile">
             <h1 class="profile_name">Welcome to Prilythic, {{ username }}!</h1>
