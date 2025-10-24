@@ -17,7 +17,7 @@
         <br>
         <button onclick="window.location.href='{{url_for('dashboard')}}'" class="DSbutton1">Dashboard</button>
         <button onclick="window.location.href='{{url_for('categories')}}'" class="DSbutton2">Categories</button>
-        <button onclick="window.location.href='{{url_for('settings')}}'" class="DSbutton3">Dark Mode</button>
+        <button id="darkModeBtn" class="DSbutton3">Dark Mode</button>
         <button onclick="confirmLogout()" class="DSbutton4" data-logout-url="{{ url_for('logout') }}">Logout</button>
         <form action="{{ url_for('delete_account') }}" method="POST" onsubmit="return confirmDelete()" style="display:inline;">
             <button type="submit" class="DSbutton5">Delete Account</button>
