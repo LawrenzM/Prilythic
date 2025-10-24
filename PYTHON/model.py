@@ -10,7 +10,7 @@ from sklearn.metrics import mean_absolute_error, make_scorer
 
 # Load Data
 script_dir = os.path.dirname(os.path.abspath(__file__))
-details_path = os.path.join(script_dir, "Data.csv")
+details_path = os.path.join(script_dir, "MAINDATA.csv")
 ticker_path = os.path.join(script_dir, "PHL_RTP_ticker_info_2007_2025-09-23.csv")
 
 # Check if files exist
@@ -36,9 +36,12 @@ else:
 
 # Reshape Wide → Long
 product_cols = [
-    "beans", "cabbage", "carrots", "eggs",
-    "meat_beef_chops", "meat_chicken_whole", "meat_pork",
-    "onions", "potatoes", "rice", "tomatoes"
+    "c_beans", "c_cabbage", "c_carrots", "c_eggs",
+    "c_meat_beef_chops", "c_meat_chicken_whole", "c_meat_pork",
+    "c_onions", "c_potatoes", "c_rice", "c_tomatoes",
+    "c_dish_soap", "c_soap", "c_shampoo", "c_bleach", 
+    "c_detergent", "c_fabric_softeners", "c_toothpaste", "c_deodorant", 
+    "c_toilet_paper"
 ]
 df_long = df.melt(
     id_vars=["ISO3", "country", "adm1_name", "adm2_name", "mkt_name", "lat", "lon", "price_date"],

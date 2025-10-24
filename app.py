@@ -41,7 +41,7 @@ init_db()
 # --- Model and Scaler Paths ---
 model_path = os.path.join(BASE_DIR, 'PYTHON', 'orfm4.pkl')
 scaler_path = os.path.join(BASE_DIR, 'PYTHON', 's4.pkl')
-data_path = os.path.join(BASE_DIR, 'PYTHON', 'Data2.csv')
+data_path = os.path.join(BASE_DIR, 'data', 'latest.csv')
 
 # --- Load model and scaler ---
 model = joblib.load(model_path)
@@ -480,41 +480,47 @@ def import_csv():
     if 'csv_file' not in request.files:
         flash("No file part", "danger")
         return redirect(url_for('settings'))
-    
+
     file = request.files['csv_file']
-    
     if file.filename == '':
         flash("No selected file", "danger")
         return redirect(url_for('settings'))
-    
+
     if file and file.filename.endswith('.csv'):
-        # Save to uploads folder first
         filepath = os.path.join(UPLOAD_FOLDER, file.filename)
         file.save(filepath)
 
         try:
-            # Read new CSV
+            # Read the new month's data
             new_data = pd.read_csv(filepath)
 
-            # Determine target CSV in DATA_FOLDER
-            # We'll use the filename itself as the product CSV name
-            target_csv = os.path.join(DATA_FOLDER, file.filename)
+            # Ensure correct folder paths
+            latest_csv = os.path.join(DATA_FOLDER, "latest.csv")
 
-            if os.path.exists(target_csv):
-                # Merge with existing data (drop duplicates by 'price_date')
-                existing_data = pd.read_csv(target_csv)
-                combined = pd.concat([existing_data, new_data]).drop_duplicates(subset='price_date', keep='last')
-                combined.to_csv(target_csv, index=False)
+            if os.path.exists(latest_csv):
+                # Read existing combined data
+                old_data = pd.read_csv(latest_csv)
+
+                # Merge, keeping latest entries if duplicates by price_date
+                combined = pd.concat([old_data, new_data], ignore_index=True)
+                combined = combined.drop_duplicates(subset='price_date', keep='last')
             else:
-                # Save as new CSV
-                new_data.to_csv(target_csv, index=False)
+                # If first import, this becomes the base data
+                combined = new_data
 
-            flash(f"CSV '{file.filename}' uploaded and database updated!", "success")
+            # Save the updated combined CSV
+            combined.to_csv(latest_csv, index=False)
+
+            # Automatically load the new latest.csv into the dashboard
+            session['loaded_csv'] = 'latest.csv'
+
+            flash("New data appended successfully to latest.csv!", "success")
+            return redirect(url_for('dashboard'))
+
         except Exception as e:
             flash(f"Error processing CSV: {e}", "danger")
-        
-        return redirect(url_for('settings'))
-    
+            return redirect(url_for('settings'))
+
     flash("Invalid file type. Please upload a CSV.", "danger")
     return redirect(url_for('settings'))
 

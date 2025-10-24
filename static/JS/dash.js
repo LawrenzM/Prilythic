@@ -416,12 +416,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
 window.updateChart = function(id, months) {
     const data = window['historical_' + id] || [];
-    if (data.length === 0) {
-        console.warn(`Cannot update chart — no data for ${id}`);
-        return;
-    }
-    drawChart(id, data, months);
+    if (data.length === 0) return;
+
+    const actualMonths = Math.min(months, data.length);
+    const hist = data.slice(-actualMonths); // last N months
+    drawChart(id, hist, actualMonths);
 };
+
 
 function drawChart(id, historical, months) {
     const chartElem = document.getElementById(`priceChart-${id}`);
@@ -450,18 +451,17 @@ function drawChart(id, historical, months) {
         return;
     }
 
-    const labels = hist.map(h => {
-        const date = h.price_date || h.date;
-        if (date && date.includes('-')) {
-            const [year, month] = date.split('-');
-            const monthNum = parseInt(month);
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                              'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const monthName = monthNames[monthNum - 1] || month;
-            return `${monthName} ${year}`;
-        }
-        return date;
-    });
+    const labels = hist.map((h, i) => {
+    const date = h.price_date || h.date;
+    if (date && date.includes('-')) {
+        const [year, month] = date.split('-');
+        const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const monthName = monthNames[parseInt(month) - 1];
+        return `${monthName}`; // Only month label
+    }
+    return date;
+});
+
     
     const prices = hist.map(h => h[priceKey]);
 

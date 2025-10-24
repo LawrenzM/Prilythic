@@ -31,7 +31,7 @@
         <br>
         <button onclick="window.location.href='{{url_for('dashboard')}}'" class="DSbutton1">Dashboard</button>
         <button onclick="window.location.href='{{url_for('categories')}}'" class="DSbutton2">Categories</button>
-        <button onclick="window.location.href='{{url_for('settings')}}'" class="DSbutton3">Dark Mode</button>
+        <button id="darkModeBtn" class="DSbutton3">Dark Mode</button>
         <button onclick="confirmLogout()" class="DSbutton4" data-logout-url="{{ url_for('logout') }}">Logout</button>
         <form action="{{ url_for('delete_account') }}" method="POST" onsubmit="return confirmDelete()" style="display:inline;">
             <button type="submit" class="DSbutton5">Delete Account</button>
@@ -94,16 +94,17 @@
                         </button>
                     </div>
                     <canvas id="priceChart-{{ safe_name }}" class="price-chart-canvas"></canvas>
-                    <div class="btn-group mt-2">
-                        <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ safe_name }}', 3)">3M</button>
-                        <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ safe_name }}', 6)">6M</button>
-                        <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ safe_name }}', 9)">9M</button>
-                        <button class="btn btn-outline-primary btn-sm" onclick="updateChart('{{ safe_name }}', 12)">1Y</button>
+                    <div class="btn-group mt-2" role="group">
+                        <button class="btn btn-primary btn-sm active" data-product="{{ safe_name }}" data-months="3">3 Months</button>
+                        <button class="btn btn-outline-primary btn-sm" data-product="{{ safe_name }}" data-months="6">6 Months</button>
+                        <button class="btn btn-outline-primary btn-sm" data-product="{{ safe_name }}" data-months="9">9 Months</button>
+                        <button class="btn btn-outline-primary btn-sm" data-product="{{ safe_name }}" data-months="12">12 Months</button>
                     </div>
+
                 </div>
             </div>
             <div class="col-md-4 d-flex align-items-center">
-                <div class="card p-3 w-100">
+                <div class="card p-3 predicted-card">
                     <h6>Predicted Price</h6>
                     <p class="display-6 text-success mb-1" id="predicted-{{ safe_name }}">
                         {{ info.predicted_price | round(2) }}
@@ -113,6 +114,7 @@
                     </small>
                 </div>
             </div>
+
         </div>
         <script>
             // Store product data globally
@@ -160,6 +162,48 @@
             });
         }); 
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dropArea = document.getElementById('drop-area');
+            const fileInput = document.getElementById('fileElem');
+            const fileNameDisplay = document.getElementById('file-name');
+            const form = document.getElementById('csvForm');
+
+            // Prevent default behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, e => e.preventDefault());
+                dropArea.addEventListener(eventName, e => e.stopPropagation());
+            });
+
+            // Highlight drop area
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'));
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'));
+            });
+
+            // Handle drop
+            dropArea.addEventListener('drop', e => {
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].name.endsWith('.csv')) {
+                    fileInput.files = files; // Assign dropped file to input
+                    fileNameDisplay.textContent = `Selected: ${files[0].name}`;
+                } else {
+                    alert('Please drop a valid CSV file.');
+                }
+            });
+
+            // Display selected file name when using button
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length > 0) {
+                    fileNameDisplay.textContent = `Selected: ${fileInput.files[0].name}`;
+                }
+            });
+        });
+        </script>
+
 
 </body>
 </html>

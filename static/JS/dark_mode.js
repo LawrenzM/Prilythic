@@ -11,45 +11,33 @@ function toggleDarkMode() {
     updateDarkModeButton();
 }
 
-// Function to disable dark mode
-function disableDarkMode() {
-    localStorage.setItem('darkMode', 'false');
-    document.body.classList.remove('dark-mode');
-}
-
 // Function to apply dark mode
 function applyDarkMode() {
     document.body.classList.add('dark-mode');
 }
 
-// Function to update dark mode button text
+// Function to update button text
 function updateDarkModeButton() {
-    const darkModeButton = document.querySelector('.pref_but2');
+    const darkModeButton = document.getElementById('darkModeBtn');
     if (darkModeButton) {
         const darkMode = localStorage.getItem('darkMode');
-        if (darkMode === 'true') {
-            darkModeButton.textContent = 'Disable';
-        } else {
-            darkModeButton.textContent = 'Enable';
-        }
+        darkModeButton.textContent = darkMode === 'true' ? 'Disable Dark Mode' : 'Enable Dark Mode';
     }
 }
 
-// Function to load saved dark mode preference
+// Load saved preference
 function loadDarkModePreference() {
-    const darkMode = localStorage.getItem('darkMode');
-    if (darkMode === 'true') {
+    if (localStorage.getItem('darkMode') === 'true') {
         applyDarkMode();
     }
 }
 
-// Initialize dark mode on every page
+// Initialize
 document.addEventListener('DOMContentLoaded', () => {
     loadDarkModePreference();
     updateDarkModeButton();
-    
-    // Add click event listener to dark mode button if on preferences page
-    const darkModeButton = document.querySelector('.pref_but2');
+
+    const darkModeButton = document.getElementById('darkModeBtn');
     if (darkModeButton) {
         darkModeButton.addEventListener('click', toggleDarkMode);
     }

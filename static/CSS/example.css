@@ -18,6 +18,7 @@ body{
     height:300px;
     width:300px;
     left:100px;
+    top: 20px;
 
 }
 
@@ -124,7 +125,8 @@ input[type="search_box"]{
     height: 1045px !important;
     border-radius: 10px !important;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 8px 20px rgba(0,0,0,0.1);
-
+    overflow-y: auto;   /* Enable vertical scrolling */
+    overflow-x: hidden;
 }
 
 .wall2{
@@ -617,7 +619,8 @@ input[type="checkbox"]{
 }
 .scrollable-price-charts {
     max-height: 1000px;        /* scrollable container height */
-    overflow-y: auto;         /* enable vertical scroll */
+    overflow-y: auto;   /* Enable vertical scrolling */
+    overflow-x: hidden;       
 }
 
 
@@ -769,6 +772,12 @@ input[type="checkbox"]{
     transition: all 0.3s ease;
 }
 
+.predicted-card {
+    width: 90%; 
+    margin: 0 auto; 
+}
+
+
 .simulate-btn {
     background-color: #28a745;
     color: white;
@@ -818,12 +827,14 @@ body.dark-mode .set_wall,
 body.dark-mode .favorite_wall,
 body.dark-mode .wall_categories,
 body.dark-mode .wall_categories2 {
-    background-color: #ffffff !important;
+    background-color: #2d284b !important;
 }
 
 body.dark-mode .dstxt,
 body.dark-mode .profile_name,
-body.dark-mode .profile .profile_name {
+body.dark-mode .profile .profile_name,
+body.dark-mode .favorite_txt,
+body.dark-mode .pdsgn{
     color: #ffffff !important;
 }
 body.dark-mode.vegetable-page .category_select,
@@ -922,32 +933,32 @@ body.dark-mode .simulate-all-btn:hover {
 
 .img1{
     position:absolute;
-    left:105px;
-    top:400px;
+    left:83px;
+    top:405px;
 }
 
 .img2{
     position:absolute;
-    left:105px;
-    top:545px;
+    left:83px;
+    top:552px;
 }
 
 .img3{
     position:absolute;
-    left:105px;
-    top:700px;
+    left:82px;
+    top:703px;
 }
 
 .img4{
     position:absolute;
-    left:125px;
-    top:850px;
+    left:85px;
+    top:856px;
 }
 
 .img5{
     position:absolute;
-    left:85px;
-    top:1000px;
+    left:83px;
+    top:1005px;
 }
 
 #drop-area{
@@ -958,4 +969,10 @@ body.dark-mode .simulate-all-btn:hover {
     height:600px;
     border-radius: 20px;
 
+}
+
+#drop-area.highlight {
+  border: 3px dashed #fff;
+  background-color: #6A5ACD;
+  transition: 0.3s ease;
 }
