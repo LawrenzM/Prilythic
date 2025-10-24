@@ -1,12 +1,12 @@
 import os
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split, GridSearchCV, RandomizedSearchCV
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.impute import SimpleImputer
 import joblib
-from sklearn.metrics import mean_absolute_error, make_scorer
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 # Load Data
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -104,48 +104,70 @@ split_idx = int(len(X_scaled) * 0.8)
 X_train, X_test = X_scaled[:split_idx], X_scaled[split_idx:]
 y_train, y_test = y.iloc[:split_idx], y.iloc[split_idx:]
 
-# Define the parameter grid for Random Forest
-rf_params = {
-    'n_estimators': [100, 200, 300],
-    'max_depth': [None, 10, 20, 30],
-    'min_samples_split': [2, 5, 10],
-    'min_samples_leaf': [1, 2, 4],
-    'bootstrap': [True, False],
-    'max_features': ['auto', 'sqrt']
-}
+# --- SIMPLIFIED: Use optimized Random Forest without tuning ---
+print("Training Random Forest with optimized parameters...")
 
-# Create the Random Forest model
-rf = RandomForestRegressor(random_state=42)
+# Create and train Random Forest with optimized defaults
+rf_model = RandomForestRegressor(
+    n_estimators=200,          
+    max_depth=20,              
+    min_samples_split=5,        
+    min_samples_leaf=2,         
+    random_state=42,
+    n_jobs=-1
+)
 
-# Use GridSearchCV for hyperparameter tuning
-grid_rf = GridSearchCV(rf, param_grid=rf_params, cv=5, scoring='neg_mean_absolute_error', n_jobs=-1, verbose=2)
-grid_rf.fit(X_train, y_train)
+rf_model.fit(X_train, y_train)
 
-# Get the best model
-best_rf_model = grid_rf.best_estimator_
+# Make predictions
+y_pred = rf_model.predict(X_test)
 
-# Evaluate the best model
-best_score = grid_rf.best_score_
-print(f"Best Model Score: {best_score}")
-print(f"Best Model Parameters: {grid_rf.best_params_}")
+# --- COMPREHENSIVE EVALUATION ---
+print("\n" + "="*50)
+print("MODEL EVALUATION (No Hyperparameter Tuning)")
+print("="*50)
 
-best_score = grid_rf.best_score_
-print(f"Best Model Score (neg MAE): {best_score}")
-print(f"Best Model Parameters: {grid_rf.best_params_}")
-
-# --- Calculate Mean Squared Error on the test set ---
-from sklearn.metrics import mean_squared_error
-
-y_pred = best_rf_model.predict(X_test)
+# Calculate all metrics
 mse = mean_squared_error(y_test, y_pred)
-print(f"Mean Squared Error (MSE) on test set: {mse:.4f}")
+rmse = np.sqrt(mse)
+mae = mean_absolute_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+mape = np.mean(np.abs((y_test - y_pred) / y_test)) * 100
+max_error = np.max(np.abs(y_test - y_pred))
+
+# Print metrics
+print(f"Mean Squared Error (MSE): {mse:.4f}")
+print(f"Root Mean Squared Error (RMSE): {rmse:.4f}")
+print(f"Mean Absolute Error (MAE): {mae:.4f}")
+print(f"R-squared (R²): {r2:.4f}")
+print(f"Mean Absolute Percentage Error (MAPE): {mape:.2f}%")
+print(f"Maximum Error: {max_error:.4f}")
+
+# Price distribution context
+avg_price = y_train.mean()
+print(f"\nAverage Price: ${avg_price:.2f}")
+print(f"MAE as % of average price: {(mae/avg_price)*100:.1f}%")
+
+# Interpretation
+if (mae/avg_price)*100 < 10:
+    assessment = "✅ EXCELLENT"
+elif (mae/avg_price)*100 < 20:
+    assessment = "✅ GOOD"
+elif (mae/avg_price)*100 < 30:
+    assessment = "⚠️ ACCEPTABLE"
+else:
+    assessment = "❌ POOR - NEEDS IMPROVEMENT"
+
+print(f"ASSESSMENT: {assessment}")
 
 # Save the model and scaler
 model_path = os.path.join(script_dir, "orfm4.pkl")
 scaler_path = os.path.join(script_dir, "s4.pkl")
-joblib.dump(best_rf_model, model_path)
+joblib.dump(rf_model, model_path)
 joblib.dump(scaler, scaler_path)
 
-print("Optimized Random Forest model and scaler saved successfully.")
+print("\n" + "="*50)
+print("MODEL SAVED SUCCESSFULLY")
+print("="*50)
 print("Model saved at:", model_path)
 print("Scaler saved at:", scaler_path)
