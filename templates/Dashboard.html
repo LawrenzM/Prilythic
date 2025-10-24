@@ -46,21 +46,21 @@
 
     <div class ="favorite_wall">
         <h1 class="favorite_txt">CSV Import Panel</h1>
-        <p class="pdsgn">Drag and Drop your Data Here! 😊</p>
+        <p class="pdsgn">Drag and Drop your Data Here! 😊</p>\
         <div class="csv-upload-section" 
-            style="position:relative; top:140px; left:5px; width:550px; height:850px; padding:20px; 
-                    background-color:#504CAB; color:white; border-radius:20px;">
+            style="position:relative; top:120px; left:5px; width:550px; height:850px; padding:20px; 
+                    background-color:#2d284b; color:white; border-radius:20px;">
             <form id="csvForm" method="POST" action="{{ url_for('import_csv') }}" enctype="multipart/form-data">
-                <div id="drop-area" class="border p-4 mb-2 text-center" style="background-color:#645ED4; color:white; font-size: x-large">
-                    <p>Drag & Drop your CSV file here</p>
-                    <p>or</p>
+                <div id="drop-area" class="border p-4 mb-2 text-center" style="background-color:#9687f5; color:white; font-size: x-large; text-align:center; justify-content: center; left:25px; ">
+                    <p class="drag">Drag and Drop your CSV file here</p>
+                    <p class="drag2">or</p>
                     <input type="file" name="csv_file" id="fileElem" accept=".csv" style="display:none;" required>
-                    <button type="button" class="btn btn-light" onclick="document.getElementById('fileElem').click();">
+                    <button type="button" class="btn btn-light" style="position: absolute; background-color: #2d284b; color: white; left:140px; top:370px;border-radius:50px; height:80px; width:200px; font-size: 20px; font-weight: bold;" onclick="document.getElementById('fileElem').click();">
                         Select CSV
                     </button>
                     <p id="file-name" class="text-truncate" style="color:white; font-size:xx-large;"></p>
                 </div>
-                <button type="submit" class="btn btn-success mt-2">Upload CSV</button>
+                <button type="submit" class="btn btn-success mt-2" style="position:absolute; background-color:#9687f5; top:755px; left:120px; height:70px; width:300px; border-radius:50px; border:1px solid white; font-weight: bold; font-size:25px;">Upload CSV</button>
             </form>
         </div>
     </div>
@@ -77,7 +77,7 @@
         <h1 class="dstxt">Overview </h1>
     </div> 
 <div class="simulation-controls">
-    <button class="simulate-all-btn" onclick="simulateAllProducts()">Simulate All Products</button>
+    <button class="simulate-all-btn" style="position:absolute; left:2030px; top:200px; background-color: #2d284b; font-weight:bold;" onclick="simulateAllProducts()">Simulate All Products</button>
 </div>
 
 <div class="wall">
@@ -89,9 +89,7 @@
                 <div class="card p-3 mb-3">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="mb-2">{{ info.name }}</h5>
-                        <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ safe_name }}')">
-                            Simulate
-                        </button>
+                      
                     </div>
                     <canvas id="priceChart-{{ safe_name }}" class="price-chart-canvas"></canvas>
                     <div class="btn-group mt-2" role="group">
