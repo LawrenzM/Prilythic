@@ -97,7 +97,7 @@ button:after{
 
 input[type="search_box"]{
     position:absolute;
-    left:950px;
+    left:900px;
     top:180px;
     height:80px;
     width:600px;
@@ -109,12 +109,25 @@ input[type="search_box"]{
     position:absolute;
     height:50px;
     width:50px;
-    left:1475px;
+    left:1425px;
     top:195px;
 
 }
 
 .wall{
+    background-color: #FFFFFF !important;
+    padding:20px !important;
+    position:absolute !important;
+    top:300px !important;
+    left:600px !important;
+    width:1650px !important;
+    height: 1045px !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 8px 20px rgba(0,0,0,0.1);
+
+}
+
+.c_wall{
     background-color: #FFFFFF !important;
     padding:20px !important;
     position:absolute !important;
@@ -328,8 +341,8 @@ input[type="search_box"]{
     color: #2d284b;
     position: absolute;
     font-size: 35px;
-    top:100px;
-    left: 80px;
+    top:90px;
+    left: 30px;
     font-size: 25px;
     font-family: sans-serif;
 }
@@ -907,9 +920,10 @@ body.dark-mode .simulate-all-btn:hover {
 .favorite_txt{
     position:absolute;
     color:#2d284b;
-    left:80px;
+    left: 30px;
     font-size: 40px;
     font-family: sans-serif;
+    top:40px;
 }
 
 .search_bar{
@@ -953,9 +967,30 @@ body.dark-mode .simulate-all-btn:hover {
 #drop-area{
     background-color: black;
     position:absolute;
-    top:100px;
+    top:50px;
     width:500px;
-    height:600px;
+    height:700px;
     border-radius: 20px;
 
+}
+
+#btn btn-success mt-2{
+    position:absolute;
+    width:100px;
+}
+
+.drag{
+    position:absolute;
+    top:250px;
+    left:60px;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.drag2{
+    position:absolute;
+    top:310px;
+    left:230px;
+    font-size: 25px;
+    font-weight: bold;
 }
