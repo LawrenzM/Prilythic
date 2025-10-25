@@ -71,14 +71,81 @@
     }
     </script>
 
+
     <div class="search">
-        <input type="search_box" class="search" placeholder="Search...">
-        <img src="{{url_for('static', filename='IMAGES/Search_icon.png')}}" alt="search icon" class="search-icn">
-        <h1 class="dstxt">Overview </h1>
-    </div> 
-<div class="simulation-controls">
-    <button class="simulate-all-btn" style="position:absolute; left:2030px; top:200px; background-color: #2d284b; font-weight:bold;" onclick="simulateAllProducts()">Simulate All Products</button>
-</div>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search...">
+            <img src="{{ url_for('static', filename='IMAGES/Search_icon.png') }}" alt="search icon" class="search-icn">
+        </div>
+        <ul id="suggestions" class="suggestions"></ul>
+    </div>
+
+    </div>
+        <script>
+            const searchInput = document.getElementById("searchInput");
+            const suggestionsList = document.getElementById("suggestions");
+
+            // 🧩 Full searchable product list with their categories
+            const products = [
+            // 🥩 Poultry & Meat
+            { name: "Beef", category: "poultrymeat", url: "{{ url_for('meat') }}" },
+            { name: "Chicken", category: "poultrymeat", url: "{{ url_for('meat') }}" },
+            { name: "Pork", category: "poultrymeat", url: "{{ url_for('meat') }}" },
+
+            // 🥦 Vegetables
+            { name: "Beans", category: "vegetables", url: "{{ url_for('vegetable') }}" },
+            { name: "Cabbage", category: "vegetables", url: "{{ url_for('vegetable') }}" },
+            { name: "Carrots", category: "vegetables", url: "{{ url_for('vegetable') }}" },
+            { name: "Potato", category: "vegetables", url: "{{ url_for('vegetable') }}" },
+            { name: "Tomatoes", category: "vegetables", url: "{{ url_for('vegetable') }}" },
+
+            // 🍚 Cooking Essentials
+            { name: "Rice", category: "cooking", url: "{{ url_for('cook') }}" },
+            { name: "Onions", category: "vegetables", url: "{{ url_for('cook') }}" },
+            { name: "Eggs", category: "cooking", url: "{{ url_for('cook') }}" },
+
+            // 🧴 Toiletries
+            { name: "Soap", category: "toiletries", url: "{{ url_for('toiletries') }}" },
+            { name: "Shampoo", category: "toiletries", url: "{{ url_for('toiletries') }}" },
+            { name: "Toothpaste", category: "toiletries", url: "{{ url_for('toiletries') }}" },
+            { name: "Deodorant", category: "toiletries", url: "{{ url_for('toiletries') }}" },
+            { name: "Toilet Paper", category: "toiletries", url: "{{ url_for('toiletries') }}" },
+
+            // 🏠 Household Items
+            { name: "Dish Soap", category: "household", url: "{{ url_for('household') }}" },
+            { name: "Bleach", category: "household", url: "{{ url_for('household') }}" },
+            { name: "Detergent", category: "household", url: "{{ url_for('household') }}" },
+            { name: "Fabric Softener", category: "household", url: "{{ url_for('household') }}" },
+            ];
+
+            // 🧠 Dynamic search logic
+            searchInput.addEventListener("input", () => {
+            const query = searchInput.value.toLowerCase().trim();
+            suggestionsList.innerHTML = "";
+
+            if (query.length === 0) return;
+
+            const matches = products.filter(item =>
+                item.name.toLowerCase().includes(query)
+            );
+
+            if (matches.length > 0) {
+                matches.forEach(match => {
+                const li = document.createElement("li");
+                li.textContent = match.name;
+                li.addEventListener("click", () => {
+                    window.location.href = match.url; // redirect to the correct page
+                });
+                suggestionsList.appendChild(li);
+                });
+            } else {
+                const li = document.createElement("li");
+                li.textContent = "No results found";
+                li.style.color = "#999";
+                suggestionsList.appendChild(li);
+            }
+            });
+        </script>
 
 <div class="wall">
     <div class="scrollable-price-charts">
