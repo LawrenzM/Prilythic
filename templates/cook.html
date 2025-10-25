@@ -45,10 +45,6 @@
         <h1 class="dstxt">Cooking Essentials Category</h1>
     </div>
 
-    <div class="simulation-controls">
-        <button class="simulate-all-btn" onclick="simulateAllCookingProducts()">Simulate All Cooking Products</button>
-    </div>
-
     <div class="wall">        
         <!-- Debug info (hidden) -->
         <div style="display: none;">
@@ -66,9 +62,6 @@
                     <div class="card p-3 mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-2">{{ onions_info.name }}</h5>
-                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ onions_safe_name }}')">
-                                Simulate
-                            </button>
                         </div>
                         <canvas id="priceChart-{{ onions_safe_name }}" class="price-chart-canvas"></canvas>
                         <div class="btn-group mt-2">
@@ -108,9 +101,6 @@
                     <div class="card p-3 mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-2">{{ rice_info.name }}</h5>
-                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ rice_safe_name }}')">
-                                Simulate
-                            </button>
                         </div>
                         <canvas id="priceChart-{{ rice_safe_name }}" class="price-chart-canvas"></canvas>
                         <div class="btn-group mt-2">
@@ -150,9 +140,6 @@
                     <div class="card p-3 mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-2">{{ eggs_info.name }}</h5>
-                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ eggs_safe_name }}')">
-                                Simulate
-                            </button>
                         </div>
                         <canvas id="priceChart-{{ eggs_safe_name }}" class="price-chart-canvas"></canvas>
                         <div class="btn-group mt-2">
@@ -186,23 +173,9 @@
         </div>
     </div>
 
-    <script>
-        // Function to simulate all cooking products
-        function simulateAllCookingProducts() {
-            {% if onions_info and onions_info.historical %}
-            simulateProduct('{{ onions_safe_name }}');
-            {% endif %}
-            {% if rice_info and rice_info.historical %}
-            setTimeout(() => simulateProduct('{{ rice_safe_name }}'), 500);
-            {% endif %}
-            {% if eggs_info and eggs_info.historical %}
-            setTimeout(() => simulateProduct('{{ eggs_safe_name }}'), 1000);
-            {% endif %}
-        }
-    </script>
-
     <div class="profile">
-        <h1 class="profile_name">Welcome to Prilythic, User!</h1>
+        <h1 class="profile_name">Welcome to Prilythic, {{ username }}! 👋</h1>
+        </div>
     </div>
 </body>
 </html>

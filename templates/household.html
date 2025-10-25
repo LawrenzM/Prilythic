@@ -48,10 +48,6 @@
         <h1 class="dstxt">Household Category</h1>
     </div>
 
-    <div class="simulation-controls">
-        <button class="simulate-all-btn" onclick="simulateAllHouseholdProducts()">Simulate All Household Products</button>
-    </div>
-
     <div class="wall">
         <!-- Debug info (hidden) -->
         <div style="display: none;">
@@ -70,9 +66,6 @@
                     <div class="card p-3 mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-2">{{ fabricsoftener_info.name }}</h5>
-                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ fabricsoftener_safe_name }}')">
-                                Simulate
-                            </button>
                         </div>
                         <canvas id="priceChart-{{ fabricsoftener_safe_name }}" class="price-chart-canvas"></canvas>
                         <div class="btn-group mt-2">
@@ -112,9 +105,6 @@
                     <div class="card p-3 mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-2">{{ detergent_info.name }}</h5>
-                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ detergent_safe_name }}')">
-                                Simulate
-                            </button>
                         </div>
                         <canvas id="priceChart-{{ detergent_safe_name }}" class="price-chart-canvas"></canvas>
                         <div class="btn-group mt-2">
@@ -154,9 +144,6 @@
                     <div class="card p-3 mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-2">{{ dishsoap_info.name }}</h5>
-                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ dishsoap_safe_name }}')">
-                                Simulate
-                            </button>
                         </div>
                         <canvas id="priceChart-{{ dishsoap_safe_name }}" class="price-chart-canvas"></canvas>
                         <div class="btn-group mt-2">
@@ -196,9 +183,6 @@
                     <div class="card p-3 mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-2">{{ bleach_info.name }}</h5>
-                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ bleach_safe_name }}')">
-                                Simulate
-                            </button>
                         </div>
                         <canvas id="priceChart-{{ bleach_safe_name }}" class="price-chart-canvas"></canvas>
                         <div class="btn-group mt-2">
@@ -251,7 +235,8 @@
     </script>
 
     <div class="profile">
-        <h1 class="profile_name">Welcome to Prilythic, User!</h1>
+        <h1 class="profile_name">Welcome to Prilythic, {{ username }}! 👋</h1>
+        </div>
     </div>
 </body>
 </html>

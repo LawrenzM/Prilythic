@@ -44,10 +44,6 @@
         <h1 class="dstxt">Meat Category</h1>
     </div>
 
-    <div class="simulation-controls">
-        <button class="simulate-all-btn" onclick="simulateAllMeatProducts()">Simulate All Meat Products</button>
-    </div>
-
     <div class="wall">
      
         <!-- Debug info (hidden) -->
@@ -66,9 +62,6 @@
                     <div class="card p-3 mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-2">{{ beef_info.name }}</h5>
-                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ beef_safe_name }}')">
-                                Simulate
-                            </button>
                         </div>
                         <canvas id="priceChart-{{ beef_safe_name }}" class="price-chart-canvas"></canvas>
                         <div class="btn-group mt-2">
@@ -108,9 +101,6 @@
                     <div class="card p-3 mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-2">{{ chicken_info.name }}</h5>
-                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ chicken_safe_name }}')">
-                                Simulate
-                            </button>
                         </div>
                         <canvas id="priceChart-{{ chicken_safe_name }}" class="price-chart-canvas"></canvas>
                         <div class="btn-group mt-2">
@@ -150,9 +140,6 @@
                     <div class="card p-3 mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-2">{{ pork_info.name }}</h5>
-                            <button class="btn btn-success simulate-btn" onclick="simulateProduct('{{ pork_safe_name }}')">
-                                Simulate
-                            </button>
                         </div>
                         <canvas id="priceChart-{{ pork_safe_name }}" class="price-chart-canvas"></canvas>
                         <div class="btn-group mt-2">
@@ -215,7 +202,8 @@
     </script>
 
     <div class="profile">
-        <h1 class="profile_name">Welcome to Prilythic, User!</h1>
+        <h1 class="profile_name">Welcome to Prilythic, {{ username }}! 👋</h1>
+        </div>
     </div>
 </body>
 </html>

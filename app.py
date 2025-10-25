@@ -326,6 +326,7 @@ def meat():
     if 'username' not in session:
         return redirect(url_for('login_page'))
 
+    username = session['username']
     # Get data for all meat products
     beef_info = get_product_info('c_meat_beef_chops')
     chicken_info = get_product_info('c_meat_chicken_whole') 
@@ -334,7 +335,7 @@ def meat():
     return render_template('meat.html', 
                          beef_info=beef_info,
                          chicken_info=chicken_info,
-                         pork_info=pork_info)
+                         pork_info=pork_info, username=username)
 
 # --- Vegetable Category Page ---
 @app.route('/vegetable')
@@ -342,6 +343,7 @@ def vegetable():
     if 'username' not in session:
         return redirect(url_for('login_page'))
 
+    username = session['username']
     # Get data for all vegetable products
     beans_info = get_product_info('c_beans')
     carrots_info = get_product_info('c_carrots')
@@ -354,7 +356,7 @@ def vegetable():
                          carrots_info=carrots_info,
                          cabbage_info=cabbage_info,
                          tomatoes_info=tomatoes_info,
-                         potatoes_info=potatoes_info)
+                         potatoes_info=potatoes_info, username=username)
 
 
 # --- Cooking Essentials Category Page ---
@@ -363,6 +365,7 @@ def cook():
     if 'username' not in session:
         return redirect(url_for('login_page'))
 
+    username = session['username']
     # Get data for all cooking essential products
     onions_info = get_product_info('c_onions')
     rice_info = get_product_info('c_rice')
@@ -371,7 +374,7 @@ def cook():
     return render_template('cook.html', 
                          onions_info=onions_info,
                          rice_info=rice_info,
-                         eggs_info=eggs_info)
+                         eggs_info=eggs_info, username=username)
 
 # --- Toiletries Category Page ---
 @app.route('/toiletries')
@@ -379,6 +382,7 @@ def toiletries():
     if 'username' not in session:
         return redirect(url_for('login_page'))
 
+    username = session['username']
     # Get data for all toiletries products
     soap_info = get_product_info('c_soap')
     shampoo_info = get_product_info('c_shampoo')
@@ -391,7 +395,7 @@ def toiletries():
                          shampoo_info=shampoo_info,
                          toothpaste_info=toothpaste_info,
                          deodorant_info=deodorant_info,
-                         toiletpaper_info=toiletpaper_info)
+                         toiletpaper_info=toiletpaper_info, username=username)
 
 # --- Household Category Page ---
 @app.route('/household')
@@ -399,8 +403,9 @@ def household():
     if 'username' not in session:
         return redirect(url_for('login_page'))
 
+    username = session['username']
     # Get data for all household products
-    fabricsoftener_info = get_product_info('c_fabric_softener')
+    fabricsoftener_info = get_product_info('c_fabric_softeners')
     detergent_info = get_product_info('c_detergent')
     dishsoap_info = get_product_info('c_dish_soap')
     bleach_info = get_product_info('c_bleach')
@@ -409,7 +414,7 @@ def household():
                          fabricsoftener_info=fabricsoftener_info,
                          detergent_info=detergent_info,
                          dishsoap_info=dishsoap_info,
-                         bleach_info=bleach_info)
+                         bleach_info=bleach_info, username=username)
 
 
 # --- Logout Route ---
