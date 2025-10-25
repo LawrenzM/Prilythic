@@ -18,7 +18,7 @@ body{
   /* 👇 animation start */
   opacity: 0;
   transform: translateX(-100px);
-  animation: slideInFromLeft 1.2s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  animation: slideInFromLeft 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
 }
 
 /* ✨ Slide + Fade effect */
@@ -101,14 +101,14 @@ button:hover{
     background-color: #A29EE5;
     transform: scaleX(1.0);
     transform: scaleY(1.0);
-    transition: 1s;
+    transition: 0.5s;
 }
 
 button:after{
     background-color: #645ED4;
     transform: scaleX(1.0);
     transform: scaleY(1.0);
-    transition: 1s;
+    transition: 0.5s;
 }
 
 .search {
@@ -121,7 +121,7 @@ button:after{
     /* ✨ Add subtle fade+slide animation */
     opacity: 0;
     transform: translateX(80px);
-    animation: fadeInSearch 1s ease-out forwards;
+    animation: fadeInSearch 0.5s ease-out forwards;
 }
 
 /* Keyframes for the entrance effect */
@@ -228,7 +228,7 @@ body.dark-mode .search-bar input {
     /* ✨ Fade + Slide Animation */
     opacity: 0;
     transform: translateY(30px);
-    animation: fadeInWall 1s ease-out forwards;
+    animation: fadeInWall 0.5s ease-out forwards;
 }
 
 /* Keyframes for smooth slide-in + fade */
@@ -263,7 +263,7 @@ body.dark-mode .search-bar input {
     /* ✨ Animation: Fade in with slight upward motion */
     opacity: 0;
     transform: translateY(30px);
-    animation: fadeInWall 0.9s ease-out forwards;
+    animation: fadeInWall 0.5s ease-out forwards;
     transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
 }
 
@@ -375,7 +375,7 @@ body.dark-mode .c_wall::-webkit-scrollbar-thumb:hover {
     /* ✨ Animation setup */
     opacity: 0;
     transform: translateX(120px);
-    animation: fadeInFromRight 1.2s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    animation: fadeInFromRight 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
 }
 
 /* 🎞️ Animation keyframes */
@@ -454,7 +454,7 @@ body.dark-mode .c_wall::-webkit-scrollbar-thumb:hover {
     font-weight: bold;
     letter-spacing: 1px;
     transition: color 0.3s ease, text-shadow 0.3s ease;
-    animation: fadeInProfile 0.8s ease-in-out;
+    animation: fadeInProfile 0.5s ease-in-out;
 }
 
 /* 🌙 Dark Mode Styling */
