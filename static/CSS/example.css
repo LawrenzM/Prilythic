@@ -41,6 +41,7 @@ body{
     font-size:40px;
     font-family: sans-serif;
     font-weight: bold;
+    width: 1000px;
 }
 body.dark-mode .dstxt {
     color: #ffffff !important;
