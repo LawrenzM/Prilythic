@@ -1,136 +1,197 @@
-html{
-  margin:0;
-  height:100%;
-  overflow:hidden
+html {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
-body{
+body {
   background: conic-gradient(#160DAF, #433CC4, #706ADA);
+  animation: bgFade 0.7s ease-in-out forwards;
 }
 
-.login-container{
+/* 🌈 Faster background fade */
+@keyframes bgFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.login-container {
   background-color: white !important;
-  position:absolute !important;
-  width:700px !important;
-  height:1040px  !important;
-  top:200px !important;
-  left:440px !important;
+  position: absolute !important;
+  width: 700px !important;
+  height: 1040px !important;
+  top: 200px !important;
+  left: 440px !important;
   border-radius: 25px !important;
+  opacity: 0;
+  animation: slideUp 0.6s ease-out forwards;
 }
 
-input[type="Text"]{
-  width:400px;
-  height:70px;
+/* ✨ Faster slide-up animation */
+@keyframes slideUp {
+  from {
+    transform: translateY(60px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+input[type="Text"],
+input[type="password"],
+button,
+h1,
+.NoAcc,
+.ForgotPass,
+.PlsLogin,
+.User,
+.Pass {
+  opacity: 0;
+  animation: fadeIn 0.6s ease-in-out forwards;
+}
+
+/* 🎬 Faster sequential fade timing */
+h1 { animation-delay: 0.15s; }
+.PlsLogin { animation-delay: 0.25s; }
+.User, input[type="Text"] { animation-delay: 0.35s; }
+.Pass, input[type="password"] { animation-delay: 0.45s; }
+button { animation-delay: 0.55s; }
+.NoAcc, .ForgotPass { animation-delay: 0.65s; }
+
+/* 🪶 Faster fade + lift animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+input[type="Text"] {
+  width: 400px;
+  height: 70px;
   position: absolute;
-  top:300px;
-  left:130px;
+  top: 300px;
+  left: 130px;
   border-radius: 10px;
   background-color: #f1f0ff;
   font-size: xx-large;
+  transition: box-shadow 0.2s ease;
 }
 
-.User{
+input[type="Text"]:focus,
+input[type="password"]:focus {
+  box-shadow: 0 0 10px rgba(112, 106, 218, 0.5);
+  outline: none;
+}
+
+.User {
   font-size: 30px;
   font-family: sans-serif;
   position: absolute;
-  top:250px;
-  left:130px;
-  color:black;
+  top: 250px;
+  left: 130px;
+  color: black;
 }
 
-.Pass{
+.Pass {
   font-size: 30px;
   font-family: sans-serif;
   position: absolute;
-  top:410px;
-  left:130px;
+  top: 410px;
+  left: 130px;
 }
 
-input[type="password"]{
-  width:400px;
-  height:70px;
+input[type="password"] {
+  width: 400px;
+  height: 70px;
   position: absolute;
-  top:460px;
-  left:130px;
+  top: 460px;
+  left: 130px;
   border-radius: 10px;
   background-color: #f1f0ff;
   font-size: xx-large;
+  transition: box-shadow 0.2s ease;
 }
 
 #error-message {
   position: absolute;
-  top: 620px; 
-  left: 178px; 
+  top: 620px;
+  left: 178px;
   font-size: 25px;
   color: red;
   text-align: center;
   width: 300px;
 }
 
-button{
-  position:absolute;
+button {
+  position: absolute;
   font-size: 20px;
-  width:300px;
-  height:70px;
-  left:185px;
-  top:730px;
+  width: 300px;
+  height: 70px;
+  left: 185px;
+  top: 730px;
   border-radius: 25px;
   background-color: #706ADA;
-  color:white;
+  color: white;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
 }
 
-button:hover{
+button:hover {
   background-color: #837edd;
-    transform: scaleX(1.0);
-    transform: scaleY(1.0);
-    transition: 0.5s;
+  transform: scale(1.05);
 }
 
-h1{
-position: absolute  !important;
-font-size: 60px !important;
-top: 70px !important;
-left:75px !important;
-color:#433CC4 !important;
-font-family: sans-serif !important;
-}
-
-.NoAcc{
+h1 {
   position: absolute !important;
-  top:550px !important;
-  left:200px !important;
+  font-size: 60px !important;
+  top: 70px !important;
+  left: 75px !important;
+  color: #433CC4 !important;
+  font-family: sans-serif !important;
+}
+
+.NoAcc {
+  position: absolute !important;
+  top: 550px !important;
+  left: 200px !important;
   font-size: 25px !important;
   color: #706ADA !important;
-
 }
 
-.ForgotPass{
+.ForgotPass {
   position: absolute !important;
-  top:760px !important;
-  left:210px !important;
-  font-size: 15px !important;
-  color:#706ADA !important;
+  top: 760px !important;
+  left: 210px !important;
   font-size: 20px !important;
-
+  color: #706ADA !important;
 }
 
-.PlsLogin{
+.PlsLogin {
   position: absolute;
-  top:140px;
-  left:140px;
+  top: 140px;
+  left: 140px;
   font-size: 23px;
-  color:#706ADA;
+  color: #706ADA;
 }
 
-.Logo{
-  position:absolute;
-  top:70px;
-  left:1460px;
+.Logo {
+  position: absolute;
+  top: 70px;
+  left: 1460px;
+  animation: floatLogo 2.5s ease-in-out infinite;
 }
 
-img{
-  width:700px;
-  height:700px;
+/* 🌤️ Slightly faster floating logo */
+@keyframes floatLogo {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
-
+img {
+  width: 700px;
+  height: 700px;
+  opacity: 0;
+  animation: fadeIn 0.8s ease-in-out forwards;
+  animation-delay: 0.3s;
+}

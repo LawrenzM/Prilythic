@@ -7,6 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{{url_for('static', filename='CSS/ProductSelect.css')}}">
 </head>
+
 <body class="bg-light">
   <div class="container mt-5">
     <h1 class="text-center mb-4" style ="mb-4">Select 3 Products You Want to Track</h1>
@@ -41,5 +42,25 @@
       }
     });
   </script>
+  <script>
+  // Make entire form-check clickable
+  document.querySelectorAll('.form-check').forEach(box => {
+    box.addEventListener('click', () => {
+      const checkbox = box.querySelector('input[type="checkbox"]');
+      checkbox.checked = !checkbox.checked;
+      box.classList.toggle('checked', checkbox.checked);
+    });
+  });
+
+  // Validation: ensure exactly 3 selected
+  document.getElementById("productForm").addEventListener("submit", function (e) {
+    const checked = document.querySelectorAll('input[name="products"]:checked');
+    if (checked.length !== 3) {
+      e.preventDefault();
+      alert("Please select exactly 3 products.");
+    }
+  });
+</script>
+
 </body>
 </html>

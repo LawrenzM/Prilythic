@@ -3,15 +3,36 @@ body{
   display:flex;
 }
 
-.container{
-    background: linear-gradient(#2d284b) !important;
-    position:fixed !important;
-    height:1460px !important;
-    width:500px !important;
-    top:0px !important;
-    left:0px !important;
- 
+.container {
+  background: linear-gradient(180deg, #2d284b, #433cc4);
+  position: fixed;
+  height: 100vh;
+  width: 500px;
+  top: 0;
+  left: 0;
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+  z-index: 2000;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+
+  /* 👇 animation start */
+  opacity: 0;
+  transform: translateX(-100px);
+  animation: slideInFromLeft 1.2s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
 }
+
+/* ✨ Slide + Fade effect */
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 
 .ds_logo{
     position:absolute;
@@ -96,6 +117,23 @@ button:after{
     left: 1450px; /* adjust horizontal placement */
     width: 600px;
     z-index: 4000;
+
+    /* ✨ Add subtle fade+slide animation */
+    opacity: 0;
+    transform: translateX(80px);
+    animation: fadeInSearch 1s ease-out forwards;
+}
+
+/* Keyframes for the entrance effect */
+@keyframes fadeInSearch {
+    from {
+        opacity: 0;
+        transform: translateX(80px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .search-bar {
@@ -113,7 +151,35 @@ button:after{
     outline: none;
     background-color: #ffffff;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.4s ease;
 }
+
+.search-bar input:focus {
+    box-shadow: 0 0 15px rgba(100, 94, 212, 0.6);
+}
+
+.search-icn {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 35px;
+    width: 35px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.search-icn:hover {
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* 🌙 Dark mode fade transition */
+body.dark-mode .search-bar input {
+    background-color: #2d284b !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+}
+
 
 .suggestions {
     position: absolute;
@@ -146,47 +212,103 @@ button:after{
     background-color: #ebf0ff;
 }
 
-
-.search-icn {
-  position: absolute;
-  right: 30px;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 30px;
-  width: 30px;
-  cursor: pointer;
-}
-
-
-.wall{
+.wall {
     background-color: #FFFFFF !important;
-    padding:20px !important;
-    position:absolute !important;
-    top:300px !important;
-    left:600px !important;
-    width:1650px !important;
+    padding: 20px !important;
+    position: absolute !important;
+    top: 300px !important;
+    left: 600px !important;
+    width: 1650px !important;
     height: 1045px !important;
     border-radius: 10px !important;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 8px 20px rgba(0,0,0,0.1);
-    overflow-y: auto;   /* Enable vertical scrolling */
+    overflow-y: auto;
     overflow-x: hidden;
+
+    /* ✨ Fade + Slide Animation */
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInWall 1s ease-out forwards;
 }
+
+/* Keyframes for smooth slide-in + fade */
+@keyframes fadeInWall {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 
 
 .c_wall {
     position: absolute;
-    top:300px !important;
-    left:900px !important;
-    width:1650px !important;
+    top: 300px !important;
+    left: 900px !important;
+    width: 1650px !important;
     height: 1045px !important;
-    overflow-y: auto; /* enables vertical scrolling */
+    overflow-y: auto; /* Enables vertical scrolling */
     overflow-x: hidden;
     padding: 20px;
     background-color: #ffffff;
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 8px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1),
+                0 8px 20px rgba(0,0,0,0.1);
     scroll-behavior: smooth;
+
+    /* ✨ Animation: Fade in with slight upward motion */
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInWall 0.9s ease-out forwards;
+    transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
 }
+
+/* ✨ Keyframes for smooth fade + slide-up */
+@keyframes fadeInWall {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scrollbar customization */
+.c_wall::-webkit-scrollbar {
+    width: 10px;
+}
+
+.c_wall::-webkit-scrollbar-thumb {
+    background: #b6b3e0;
+    border-radius: 10px;
+}
+
+.c_wall::-webkit-scrollbar-thumb:hover {
+    background: #706ADA;
+}
+
+/* 🌙 Dark mode support */
+body.dark-mode .c_wall {
+    background-color: #2d284b !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5),
+                0 0 10px rgba(100, 94, 212, 0.3);
+}
+
+/* Optional: Adjust scrollbar in dark mode */
+body.dark-mode .c_wall::-webkit-scrollbar-thumb {
+    background: #645ED4;
+}
+body.dark-mode .c_wall::-webkit-scrollbar-thumb:hover {
+    background: #837edd;
+}
+
 
 
 .wall2{
@@ -239,18 +361,35 @@ button:after{
     border-radius: 30px !important;
 }
 
-.favorite_wall{
+.favorite_wall {
     background-color: white;
-    padding:20px;
-    position:absolute;
-    top:300px;
-    left:2280px;
-    width:600px;
+    padding: 20px;
+    position: absolute;
+    top: 300px;
+    left: 2280px;
+    width: 600px;
     height: 1045px;
     border-radius: 25px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 8px 20px rgba(0,0,0,0.1);
 
+    /* ✨ Animation setup */
+    opacity: 0;
+    transform: translateX(120px);
+    animation: fadeInFromRight 1.2s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
 }
+
+/* 🎞️ Animation keyframes */
+@keyframes fadeInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(120px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
 
 .fav_txt{
     color:#645ED4;
@@ -274,19 +413,28 @@ button:after{
     top:50px;
     left: 100px;
 }
-.p_txt{
-    position:absolute;
-    color:#645ED4;
-    font-size: 35px;
-    left:100px;
-    top:120px;
+.wall_txt {
+  position: absolute;
+  top: 40px;       /* adjust vertical position */
+  left: 350px;       /* start from center */
+  transform: translateX(-120%); /* move slightly left */
+  color: #645ED4;
+  font-size: 50px;
+  font-family: sans-serif;
+  font-weight: bold;
 }
-.wall_txt{
-    color:#645ED4;
-    position: absolute;
-    top:60px;
-    left: 100px;
+
+.p_txt {
+  position: absolute;
+  top: 80px;       /* same line as wall_txt */
+  left: 330px  ;       /* center reference */
+  transform: translateX(20%); /* move slightly right */
+  color: #645ED4;
+  font-size: 35px;
+  font-family: sans-serif;
+  font-weight: bold;
 }
+
 
 .setting_btn{
     position: absolute;
@@ -296,15 +444,37 @@ button:after{
    color: #645ED4;
 }
 
-.profile_name{
+.profile_name {
     position: absolute;
     font-size: 50px;
     color: #2d284b;
-    left:620px;
-    top:210px;
+    left: 620px;
+    top: 210px;
     font-family: sans-serif;
-    
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+    animation: fadeInProfile 0.8s ease-in-out;
 }
+
+/* 🌙 Dark Mode Styling */
+body.dark-mode .profile_name {
+    color: #ffffff;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+}
+
+/* ✨ Fade-in Animation */
+@keyframes fadeInProfile {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 
 .upload_but{
     position:absolute;
@@ -441,24 +611,65 @@ p{
     left:650px;
     border-radius: 20px;
 }
-.set_but1, .set_but2, .set_but3, .set_but4, .set_but5, .set_but6{
-    position:absolute;
+.set_but1, .set_but2, .set_but3, .set_but4, .set_but5, .set_but6 {
+    position: absolute;
     background-color: #2d284b;
-    font-size: 30px;
-    color:white;
-    height:350px;
-    width:900px;
-    left:370px;
+    color: white;
+    height: 350px;
+    width: 900px;
+    left: 370px;
     border-radius: 20px;
-    border: 0px;
+    border: none;
     cursor: pointer;
-    transition: 1s;
     font-weight: bold;
     font-size: 40px;
     font-family: sans-serif;
-    text-align:right;
-    padding:120px;
+    text-align: right;
+    padding: 120px;
+    transition: all 0.4s ease-in-out;
+    box-shadow: 0 6px 15px rgba(45, 40, 75, 0.3);
 }
+
+/* Hover effect for better UI feedback */
+.set_but1:hover, .set_but2:hover, .set_but3:hover,
+.set_but4:hover, .set_but5:hover, .set_but6:hover {
+    background-color: #433CC4;
+    transform: scale(1.03);
+    box-shadow: 0 8px 25px rgba(100, 94, 212, 0.4);
+}
+
+/* 🧭 Shifted upward but keeping even spacing */
+.set_but1 { top: 150px; }
+.set_but2 { top: 550px; }
+.set_but3 { top: 950px; }
+.set_but4 { top: 1350px; }
+.set_but5 { top: 1750px; }
+.set_but6 { top: 2150px; }
+
+/* 🌙 Dark mode adjustments */
+body.dark-mode .set_but1,
+body.dark-mode .set_but2,
+body.dark-mode .set_but3,
+body.dark-mode .set_but4,
+body.dark-mode .set_but5,
+body.dark-mode .set_but6 {
+    background-color: #9687f5; /* invert button color */
+    color: #2d284b; /* dark text for contrast */
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+}
+
+/* ✨ Glow effect on hover in dark mode */
+body.dark-mode .set_but1:hover,
+body.dark-mode .set_but2:hover,
+body.dark-mode .set_but3:hover,
+body.dark-mode .set_but4:hover,
+body.dark-mode .set_but5:hover,
+body.dark-mode .set_but6:hover {
+    background-color: #dcd9ff;
+    box-shadow: 0 10px 30px rgba(100, 94, 212, 0.6);
+    transform: scale(1.04);
+}
+
 
 .set_butm{
     position: absolute;
@@ -466,26 +677,19 @@ p{
     color: white;
     height: 50px;
 }
-.c_img1, .c_img2, .c_img3, .c_img4, .c_img5{
-    position:absolute;
-    height:200px;
-    width:200px;
-    left:500px;
+.c_img1, .c_img2, .c_img3, .c_img4, .c_img5 {
+    position: absolute;
+    height: 200px;
+    width: 200px;
+    left: 500px;
 }
 
-.c_img1 {top: 450px;}
-.c_img2 {top: 850px;}
-.c_img3 {top: 1250px;}
-.c_img4 {top: 1650px;}
-.c_img5 {top: 2050px;}  
-
-.set_but1 { top: 400px; }
-.set_but2 { top: 800px; }
-.set_but3 { top: 1200px; }
-.set_but4 { top: 1600px; }
-.set_but5 { top: 2000px; }
-.set_but6 { top: 2400px; }
-.set_butm { top: 2450px; }
+/* 🧭 Shifted upward by 250px to align with buttons */
+.c_img1 { top: 200px; }
+.c_img2 { top: 600px; }
+.c_img3 { top: 1000px; }
+.c_img4 { top: 1400px; }
+.c_img5 { top: 1800px; }
 
 .p_set{
     position:absolute;
@@ -877,32 +1081,37 @@ input[type="checkbox"]{
 }
 
 /* Dark Mode Class */
+/* Add this at the top or bottom of your dark mode CSS */
+body,
+.wall,
+.wall2,
+.set_wall,
+.favorite_wall,
+.wall_categories,
+.wall_categories2,
+.category_select,
+.dstxt,
+.profile_name,
+.favorite_txt,
+.pdsgn,
+.window,
+.dashboard-profile,
+.profile_upload {
+    transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* Keep your existing dark-mode styles */
 body.dark-mode {
     background-color: #1a1a1a !important;
 }
+
 body.dark-mode.vegetable-page,
 body.dark-mode.cook-page,
 body.dark-mode.meat-page {
     background-color: #000 !important;
 }
 
-/* Keep the background black but panels white for category pages */
-
-
-/* Keep panels white in dark mode */
-body.dark-mode .wall,
-body.dark-mode .wall2,
-body.dark-mode .set_wall,
-body.dark-mode .favorite_wall,
-body.dark-mode .wall_categories,
-body.dark-mode .wall_categories2 {
-    background-color: #ffffff !important;
-}
-body.dark-mode .category_select {
-    background-color: #ffffff !important;
-    z-index: 1;
-    box-shadow: 0 0 20px rgba(0,0,0,0.3);
-}
+/* Panels stay white or dark depending on section */
 body.dark-mode .wall,
 body.dark-mode .wall2,
 body.dark-mode .set_wall,
@@ -912,13 +1121,22 @@ body.dark-mode .wall_categories2 {
     background-color: #2d284b !important;
 }
 
+body.dark-mode .category_select {
+    background-color: #ffffff !important;
+    z-index: 1;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+/* Text color transitions */
 body.dark-mode .dstxt,
 body.dark-mode .profile_name,
 body.dark-mode .profile .profile_name,
 body.dark-mode .favorite_txt,
-body.dark-mode .pdsgn{
+body.dark-mode .pdsgn {
     color: #ffffff !important;
 }
+
+/* Specific dark themes for category pages */
 body.dark-mode.vegetable-page .category_select,
 body.dark-mode.meat-page .category_select,
 body.dark-mode.cook-page .category_select {
@@ -926,23 +1144,22 @@ body.dark-mode.cook-page .category_select {
   color: #fff;
 }
 
-/* Ensure outer walls are transparent on meat/cook/vegetable pages in dark mode */
+/* Transparent backgrounds for category pages */
 body.dark-mode.meat-page .wall_categories,
 body.dark-mode.meat-page .wall_categories2,
 body.dark-mode.meat-page .wall,
 body.dark-mode.meat-page .wall2,
 body.dark-mode.meat-page .favorite_wall {
-        background-color: transparent !important;
+    background-color: transparent !important;
 }
 
-/* Also hide the white-looking wrappers for category area */
 body.dark-mode.meat-page .window,
 body.dark-mode.meat-page .dashboard-profile,
 body.dark-mode.meat-page .profile_upload {
-        background-color: transparent !important;
+    background-color: transparent !important;
 }
 
-/* Dark mode support for simulation elements */
+/* Buttons */
 body.dark-mode .simulate-btn {
     background-color: #28a745;
     color: white;
@@ -960,6 +1177,7 @@ body.dark-mode .simulate-all-btn {
 body.dark-mode .simulate-all-btn:hover {
     background-color: #138496;
 }
+
 
 .scrollable-table {
     max-height: 400px;  /* adjust as needed */
@@ -1004,14 +1222,6 @@ body.dark-mode .simulate-all-btn:hover {
     font-size: 40px;
     font-family: sans-serif;
     top:40px;
-}
-
-.search_bar{
-    position:absolute;
-    background-color: black;
-    width:300px;
-    height:50px;
-    left:800px;
 }
 
 .img1{
