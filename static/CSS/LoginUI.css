@@ -176,16 +176,19 @@ h1 {
 }
 
 .Logo {
-  position: absolute;
-  top: 70px;
-  left: 1460px;
-  animation: floatLogo 2.5s ease-in-out infinite;
+  position: absolute !important;
+  padding:10px !important;
+  top: 70px !important;
+  left: 1460px !important;
+  width:1000px !important;
+  height:1000px !important;
+  animation: floatLogo 1.5s ease-in-out infinite !important;
 }
 
 /* 🌤️ Slightly faster floating logo */
 @keyframes floatLogo {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-25px); }
 }
 
 img {
