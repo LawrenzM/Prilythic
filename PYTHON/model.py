@@ -1,6 +1,8 @@
 import os
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestRegressor
@@ -160,6 +162,15 @@ else:
 
 print(f"ASSESSMENT: {assessment}")
 
+# Feature Importance (Top 10)
+feature_importance = pd.DataFrame({
+    'feature': X.columns,
+    'importance': rf_model.feature_importances_
+}).sort_values('importance', ascending=False)
+
+print(f"\nTop 10 Most Important Features:")
+print(feature_importance.head(10).to_string(index=False))
+
 # Save the model and scaler
 model_path = os.path.join(script_dir, "orfm4.pkl")
 scaler_path = os.path.join(script_dir, "s4.pkl")
@@ -171,3 +182,113 @@ print("MODEL SAVED SUCCESSFULLY")
 print("="*50)
 print("Model saved at:", model_path)
 print("Scaler saved at:", scaler_path)
+
+# Add this after your model evaluation metrics
+
+# --- VISUALIZATION OF EVALUATION RESULTS ---
+print("\n" + "="*50)
+print("GENERATING EVALUATION GRAPHS")
+print("="*50)
+
+# Create visualization directory if it doesn't exist
+viz_dir = os.path.join(script_dir, "model_evaluation")
+os.makedirs(viz_dir, exist_ok=True)
+
+# 1. Actual vs Predicted Scatter Plot
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred, alpha=0.6, color='blue')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
+plt.xlabel('Actual Prices')
+plt.ylabel('Predicted Prices')
+plt.title('Actual vs Predicted Prices')
+plt.grid(True, alpha=0.3)
+plt.savefig(os.path.join(viz_dir, 'actual_vs_predicted.png'), dpi=300, bbox_inches='tight')
+plt.close()
+
+# 2. Residuals Plot
+residuals = y_test - y_pred
+plt.figure(figsize=(10, 6))
+plt.scatter(y_pred, residuals, alpha=0.6, color='green')
+plt.axhline(y=0, color='r', linestyle='--')
+plt.xlabel('Predicted Prices')
+plt.ylabel('Residuals')
+plt.title('Residuals vs Predicted Prices')
+plt.grid(True, alpha=0.3)
+plt.savefig(os.path.join(viz_dir, 'residuals_plot.png'), dpi=300, bbox_inches='tight')
+plt.close()
+
+# 3. Error Distribution
+plt.figure(figsize=(10, 6))
+plt.hist(residuals, bins=50, alpha=0.7, color='orange', edgecolor='black')
+plt.xlabel('Prediction Error')
+plt.ylabel('Frequency')
+plt.title('Distribution of Prediction Errors')
+plt.axvline(x=0, color='r', linestyle='--', label='Zero Error')
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.savefig(os.path.join(viz_dir, 'error_distribution.png'), dpi=300, bbox_inches='tight')
+plt.close()
+
+# 4. Feature Importance Plot (Top 15)
+plt.figure(figsize=(12, 8))
+top_features = feature_importance.head(15)
+plt.barh(top_features['feature'], top_features['importance'], color='skyblue')
+plt.xlabel('Feature Importance')
+plt.title('Top 15 Most Important Features')
+plt.gca().invert_yaxis()
+plt.grid(True, alpha=0.3)
+plt.savefig(os.path.join(viz_dir, 'feature_importance.png'), dpi=300, bbox_inches='tight')
+plt.close()
+
+# 5. Metrics Comparison (if you want to compare multiple models)
+metrics = ['MSE', 'RMSE', 'MAE', 'R²']
+values = [mse, rmse, mae, r2]
+
+plt.figure(figsize=(10, 6))
+bars = plt.bar(metrics, values, color=['#ff9999', '#66b3ff', '#99ff99', '#ffcc99'])
+plt.ylabel('Score')
+plt.title('Model Evaluation Metrics')
+plt.ylim(0, max(values) * 1.1)
+
+# Add value labels on bars
+for bar, value in zip(bars, values):
+    plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01, 
+             f'{value:.3f}', ha='center', va='bottom')
+
+plt.grid(True, alpha=0.3)
+plt.savefig(os.path.join(viz_dir, 'metrics_comparison.png'), dpi=300, bbox_inches='tight')
+plt.close()
+
+# 6. Price Distribution vs Predictions
+plt.figure(figsize=(12, 6))
+plt.subplot(1, 2, 1)
+plt.hist(y_test, bins=50, alpha=0.7, color='blue', label='Actual', edgecolor='black')
+plt.xlabel('Price')
+plt.ylabel('Frequency')
+plt.title('Actual Price Distribution')
+plt.grid(True, alpha=0.3)
+
+plt.subplot(1, 2, 2)
+plt.hist(y_pred, bins=50, alpha=0.7, color='red', label='Predicted', edgecolor='black')
+plt.xlabel('Price')
+plt.ylabel('Frequency')
+plt.title('Predicted Price Distribution')
+plt.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.savefig(os.path.join(viz_dir, 'price_distributions.png'), dpi=300, bbox_inches='tight')
+plt.close()
+
+print("✅ Evaluation graphs saved to:", viz_dir)
+print("   - actual_vs_predicted.png")
+print("   - residuals_plot.png") 
+print("   - error_distribution.png")
+print("   - feature_importance.png")
+print("   - metrics_comparison.png")
+print("   - price_distributions.png")
+
+print("Price context for your model metrics:")
+print(f"Range: ${y_test.min():.0f} - ${y_test.max():.0f}")  # Test data only!
+print(f"Average: ${y_test.mean():.0f}")  # Test data average!
+print(f"Your MAE (${mae:.2f}) is {mae/y.mean()*100:.1f}% of average price")
+print(f"Your RMSE (${rmse:.2f}) is {rmse/y.mean()*100:.1f}% of average price")
